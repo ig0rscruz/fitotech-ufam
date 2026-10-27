@@ -1,0 +1,16 @@
+# PDFs de referência (direitos autorais / tamanho) — não publicar
+*.pdf
+
+node_modules/
+desktop/www/
+desktop/dist/
+mobile/www/
+mobile/android/
+mobile/capacitor.config.json
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# imagens originais (as versões otimizadas ficam em app/assets/img/capas)
+Imagens Renderizadas/

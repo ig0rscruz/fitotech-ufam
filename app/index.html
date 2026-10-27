@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FitoTech - UFAM</title>
+  <meta name="description" content="FitoTech - UFAM: Cartilha Digital de Fitoterapia com as 28 espécies do Memento Fitoterápico (Anvisa), busca por sintoma, alertas de segurança, calculadora de preparo e apoio ao atendimento clínico.">
+  <meta name="theme-color" content="#1d6b4f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FitoTech">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="FitoTech - UFAM, início">
+      <img src="assets/icons/icon-192.png" alt="" width="40" height="40">
+      <span><strong>FitoTech</strong><small>UFAM · Memento Fitoterápico</small></span>
+    </a>
+    <nav class="topnav" id="topnav" aria-label="Seções"></nav>
+    <div class="top-actions">
+      <a class="perfil-chip" id="perfilChip" href="#/perfil" hidden></a>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro/escuro" title="Tema">◐</button>
+      <a class="sos" href="#/emergencia" aria-label="Telefones de emergência">SOS</a>
+    </div>
+  </header>
+
+  <div id="offline" class="offline" hidden>Sem conexão — exibindo a versão salva no aparelho.</div>
+  <main id="main" tabindex="-1"></main>
+
+  <nav class="tabbar" id="tabbar" aria-label="Navegação principal"></nav>
+
+  <div id="print" aria-hidden="true"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

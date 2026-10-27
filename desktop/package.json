@@ -1,0 +1,26 @@
+{
+  "name": "fitotech-desktop",
+  "version": "1.0.0",
+  "description": "FitoTech - UFAM — Cartilha Digital de Fitoterapia (Windows)",
+  "author": "Equipe FitoTech - UFAM",
+  "license": "MIT",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "prepare-www": "node -e \"require('fs').cpSync('../app','www',{recursive:true})\"",
+    "start": "npm run prepare-www && electron .",
+    "dist": "npm run prepare-www && electron-builder --win nsis --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "br.edu.ufam.fitotech",
+    "productName": "FitoTech - UFAM",
+    "files": ["main.js", "config.json", "www/**/*"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["nsis"], "icon": "www/assets/icons/icon-256.png" },
+    "nsis": { "oneClick": true, "perMachine": false, "artifactName": "FitoTech-Setup.exe", "shortcutName": "FitoTech - UFAM" }
+  }
+}

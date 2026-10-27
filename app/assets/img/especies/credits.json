@@ -1,0 +1,140 @@
+{
+ "actaea-racemosa": {
+  "file": "actaea-racemosa.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Actaea_racemosa_002.JPG",
+  "page": "https://en.wikipedia.org/wiki/Actaea_racemosa"
+ },
+ "aesculus-hippocastanum": {
+  "file": "aesculus-hippocastanum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Illustration_Aesculus_hippocastanum0_clean.jpg",
+  "page": "https://en.wikipedia.org/wiki/Aesculus_hippocastanum"
+ },
+ "allium-sativum": {
+  "file": "allium-sativum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Allium_sativum_Woodwill_1793.jpg",
+  "page": "https://en.wikipedia.org/wiki/Garlic"
+ },
+ "aloe-vera": {
+  "file": "aloe-vera.png",
+  "commons": "https://commons.wikimedia.org/wiki/File:Aloe_vera_flower_inset.png",
+  "page": "https://en.wikipedia.org/wiki/Aloe_vera"
+ },
+ "calendula-officinalis": {
+  "file": "calendula-officinalis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:1920px-Calendula_officinalis,_pot_marigold.JPG",
+  "page": "https://en.wikipedia.org/wiki/Calendula_officinalis"
+ },
+ "cynara-scolymus": {
+  "file": "cynara-scolymus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Artichoke_J1.jpg",
+  "page": "https://en.wikipedia.org/wiki/Artichoke"
+ },
+ "echinacea-purpurea": {
+  "file": "echinacea-purpurea.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Echinacea_purpurea_Grandview_Prairie.jpg",
+  "page": "https://en.wikipedia.org/wiki/Echinacea_purpurea"
+ },
+ "equisetum-arvense": {
+  "file": "equisetum-arvense.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Equisetum_arvense_foliage.jpg",
+  "page": "https://en.wikipedia.org/wiki/Equisetum_arvense"
+ },
+ "ginkgo-biloba": {
+  "file": "ginkgo-biloba.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:GINKGOBAUM-2.jpg",
+  "page": "https://en.wikipedia.org/wiki/Ginkgo_biloba"
+ },
+ "glycine-max": {
+  "file": "glycine-max.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Soybean.USDA.jpg",
+  "page": "https://en.wikipedia.org/wiki/Soybean"
+ },
+ "harpagophytum-procumbens": {
+  "file": "harpagophytum-procumbens.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Harpagophytum_5.jpg",
+  "page": "https://en.wikipedia.org/wiki/Harpagophytum"
+ },
+ "hypericum-perforatum": {
+  "file": "hypericum-perforatum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
+  "page": "https://en.wikipedia.org/wiki/Hypericum_perforatum"
+ },
+ "matricaria-chamomilla": {
+  "file": "matricaria-chamomilla.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Matricaria_February_2008-1.jpg",
+  "page": "https://en.wikipedia.org/wiki/Matricaria_chamomilla"
+ },
+ "passiflora-incarnata": {
+  "file": "passiflora-incarnata.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Passiflora_incarnata_fruit.jpg",
+  "page": "https://en.wikipedia.org/wiki/Passiflora_incarnata"
+ },
+ "paullinia-cupana": {
+  "file": "paullinia-cupana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Paullinia_cupana_-_Köhler–s_Medizinal-Pflanzen-234.jpg",
+  "page": "https://en.wikipedia.org/wiki/Guarana"
+ },
+ "peumus-boldus": {
+  "file": "peumus-boldus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Peumus_boldus_-_Köhler–s_Medizinal-Pflanzen-104.jpg",
+  "page": "https://en.wikipedia.org/wiki/Boldo"
+ },
+ "piper-methysticum": {
+  "file": "piper-methysticum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Starr_070515-7054_Piper_methysticum.jpg",
+  "page": "https://en.wikipedia.org/wiki/Kava"
+ },
+ "psidium-guajava": {
+  "file": "psidium-guajava.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Psidium_guajava_fruit.jpg",
+  "page": "https://en.wikipedia.org/wiki/Psidium_guajava"
+ },
+ "rhamnus-purshiana": {
+  "file": "rhamnus-purshiana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Rhamnus_purshiana_-_Köhler–s_Medizinal-Pflanzen-121.jpg",
+  "page": "https://en.wikipedia.org/wiki/Frangula_purshiana"
+ },
+ "senna-alexandrina": {
+  "file": "senna-alexandrina.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Senna_alexandrina_Mill.-Cassia_angustifolia_L._(Senna_Plant).jpg",
+  "page": "https://en.wikipedia.org/wiki/Senna_alexandrina"
+ },
+ "serenoa-repens": {
+  "file": "serenoa-repens.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Serenoa_repens_USDA1.jpg",
+  "page": "https://en.wikipedia.org/wiki/Serenoa"
+ },
+ "stryphnodendron-adstringens": {
+  "file": "stryphnodendron-adstringens.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Stryphnodendron_adstringens.jpg",
+  "page": "https://en.wikipedia.org/wiki/Stryphnodendron_adstringens"
+ },
+ "trifolium-pratense": {
+  "file": "trifolium-pratense.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:3840px-Trifolium_pratense_-_Keila2.jpg",
+  "page": "https://en.wikipedia.org/wiki/Trifolium_pratense"
+ },
+ "uncaria-tomentosa": {
+  "file": "uncaria-tomentosa.png",
+  "commons": "https://commons.wikimedia.org/wiki/File:Uncaria_tomentosa.png",
+  "page": "https://en.wikipedia.org/wiki/Uncaria_tomentosa"
+ },
+ "valeriana-officinalis": {
+  "file": "valeriana-officinalis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:3840px-Valeriana_officinalis_inflorescence_-_Niitvälja.jpg",
+  "page": "https://en.wikipedia.org/wiki/Valerian_(herb)"
+ },
+ "zingiber-officinale": {
+  "file": "zingiber-officinale.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Koeh-146-no_text.jpg",
+  "page": "https://en.wikipedia.org/wiki/Ginger"
+ },
+ "lippia-sidoides": {
+  "file": "lippia-sidoides.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Lippia_graveolens,_known_as_Mexican_Oregano_(11628265214).jpg"
+ },
+ "maytenus-ilicifolia": {
+  "file": "maytenus-ilicifolia.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Maytenus_ilicifolia.jpg"
+ }
+}

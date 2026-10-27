@@ -1,0 +1,93 @@
+# Gera o APK Android e o instalador Windows e publica em Releases.
+# Os apps abrem o site do GitHub Pages (sempre atualizado). Para usar outro endereço,
+# crie a variável de repositório SITE_URL (Settings → Secrets and variables → Actions → Variables).
+name: Gerar apps (Android + Windows)
+
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/**', 'mobile/**', '.github/workflows/apps.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  url:
+    runs-on: ubuntu-latest
+    outputs:
+      site: ${{ steps.u.outputs.site }}
+    steps:
+      - id: u
+        shell: bash
+        run: |
+          if [ -n "${{ vars.SITE_URL }}" ]; then echo "site=${{ vars.SITE_URL }}" >> "$GITHUB_OUTPUT"; exit 0; fi
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"; REPO="${GITHUB_REPOSITORY#*/}"
+          if [ "${REPO,,}" = "$OWNER.github.io" ]; then URL="https://$OWNER.github.io/"; else URL="https://$OWNER.github.io/$REPO/"; fi
+          echo "site=$URL" >> "$GITHUB_OUTPUT"; echo "Site: $URL"
+
+  android:
+    needs: url
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: npm install --no-audit --no-fund
+      - run: npm run prepare-www
+      - run: npm run config
+        env: { SITE_URL: "${{ needs.url.outputs.site }}" }
+      - run: npx cap add android
+      - name: Ícones e splash
+        run: npx capacitor-assets generate --android --iconBackgroundColor '#ffffff' --splashBackgroundColor '#ffffff'
+        continue-on-error: true
+      - run: npx cap sync android
+      - name: Compilar APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../FitoTech.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: mobile/FitoTech.apk }
+
+  windows:
+    needs: url
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: echo "{\"siteUrl\":\"${{ needs.url.outputs.site }}\"}" > config.json
+      - run: npm install --no-audit --no-fund
+      - run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: desktop/dist/FitoTech-Setup.exe }
+
+  release:
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: out, merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: FitoTech - UFAM v1.0.${{ github.run_number }}
+          make_latest: true
+          body: |
+            - **Android:** baixe `FitoTech.apk` e permita instalar apps de fontes desconhecidas.
+            - **Windows:** baixe e execute `FitoTech-Setup.exe` (se o SmartScreen avisar, clique em "Mais informações" → "Executar assim mesmo").
+            - **iPhone:** abra o site no Safari → Compartilhar → Adicionar à Tela de Início.
+          files: |
+            out/FitoTech.apk
+            out/FitoTech-Setup.exe
