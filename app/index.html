@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>FitoTech - UFAM</title>
   <meta name="description" content="FitoTech - UFAM: Cartilha Digital de Fitoterapia com as 28 espécies do Memento Fitoterápico (Anvisa), busca por sintoma, alertas de segurança, calculadora de preparo e apoio ao atendimento clínico.">
-  <meta name="theme-color" content="#1d6b4f">
+  <meta name="theme-color" content="#075e52">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
@@ -15,6 +15,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="FitoTech">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/refresh.css">
 </head>
 <body>
   <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -23,7 +24,7 @@
       <img src="assets/icons/icon-192.png" alt="" width="40" height="40">
       <span><strong>FitoTech</strong><small>UFAM · Memento Fitoterápico</small></span>
     </a>
-    <nav class="topnav" id="topnav" aria-label="Seções"></nav>
+    
     <div class="top-actions">
       <a class="perfil-chip" id="perfilChip" href="#/perfil" hidden></a>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro/escuro" title="Tema">◐</button>
@@ -31,12 +32,14 @@
     </div>
   </header>
 
+  <aside class="app-sidebar"><span class="sidebar-caption">EXPLORAR</span><nav class="topnav" id="topnav" aria-label="Seções"></nav><a class="sidebar-footer institution-sidebar" href="#/sobre"><img src="assets/institutional/ufam.png" width="44" height="58" alt="Universidade Federal do Amazonas — UFAM"><span>Farmácia · UFAM<small>Projeto acadêmico<br>Conhecimento que cuida.</small></span></a></aside>
   <div id="offline" class="offline" hidden>Sem conexão — exibindo a versão salva no aparelho.</div>
   <main id="main" tabindex="-1"></main>
 
   <nav class="tabbar" id="tabbar" aria-label="Navegação principal"></nav>
 
   <div id="print" aria-hidden="true"></div>
+  <script>window.APP_CONFIG = { owner: "ig0rscruz", repo: "fitotech-ufam" };</script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>

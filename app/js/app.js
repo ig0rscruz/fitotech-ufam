@@ -2,10 +2,34 @@
 (() => {
   'use strict';
   // versão exibida no app — altere aqui ao publicar uma nova versão
-  const APP_VERSION = 'v.0';
+  const APP_VERSION = 'v.1';
   const PLANTAS = (window.PLANTAS || []).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   const byId = Object.fromEntries(PLANTAS.map(p => [p.id, p]));
   let main = document.getElementById('main');
+
+  const ICONS = {"leaf": "<path d=\"M20 4c-9-2-16 2-15 9 1 6 9 7 12 2 2-3 2-7 3-11Z\"/><path d=\"M4 21 15 10M9 16v-5m3 2h5\"/>", "home": "<path d=\"m3 10 9-7 9 7v10H3Z\"/><path d=\"M9 20v-7h6v7\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21v-2a8 8 0 0 1 16 0v2\"/>", "stethoscope": "<path d=\"M5 3v6a5 5 0 0 0 10 0V3M3 3h4m6 0h4M10 14v2a5 5 0 0 0 10 0v-3\"/><circle cx=\"20\" cy=\"10\" r=\"3\"/>", "shield": "<path d=\"m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z\"/><path d=\"m8 12 3 3 5-6\"/>", "scan": "<path d=\"M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5\"/><path d=\"M16 8c-7-1-10 6-5 8 4 1 5-4 5-8ZM8 17l5-5\"/>", "book": "<path d=\"M12 5v16M3 4c4-1 7 0 9 2 2-2 5-3 9-2v15c-4-1-7 0-9 2-2-2-5-3-9-2Z\"/>", "calculator": "<rect x=\"5\" y=\"2\" width=\"14\" height=\"20\" rx=\"3\"/><path d=\"M8 6h8v4H8Zm0 8h1m3 0h1m3 0h.1M8 18h1m3 0h1m3 0h.1\"/>", "phone": "<path d=\"m7 3 3 5-3 3a14 14 0 0 0 6 6l3-3 5 3-2 4C10 22 2 14 3 5Z\"/>", "menu": "<path d=\"M4 6h16M4 12h16M4 18h16\"/>", "download": "<path d=\"M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5\"/>", "moon": "<path d=\"M20 14A9 9 0 0 1 10 3a9 9 0 1 0 10 11Z\"/>", "search": "<circle cx=\"10\" cy=\"10\" r=\"6\"/><path d=\"m15 15 6 6\"/>", "arrow": "<path d=\"M4 12h16m-6-6 6 6-6 6\"/>", "lock": "<rect x=\"5\" y=\"10\" width=\"14\" height=\"11\" rx=\"3\"/><path d=\"M8 10V7a4 4 0 0 1 8 0v3m-4 4v3\"/>", "monitor": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 21h8m-4-4v4\"/>", "smartphone": "<rect x=\"6\" y=\"2\" width=\"12\" height=\"20\" rx=\"3\"/><path d=\"M10 5h4m-3 14h2\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><ellipse cx=\"12\" cy=\"12\" rx=\"4\" ry=\"9\"/><path d=\"M3 12h18\"/>", "pill": "<path d=\"m8 16 8-8M5 19a5 5 0 0 1 0-7l7-7a5 5 0 0 1 7 7l-7 7a5 5 0 0 1-7 0Z\"/>", "heart": "<path d=\"M20 5c-3-3-7-1-8 1-1-2-5-4-8-1-5 5 8 15 8 15S25 10 20 5Z\"/>", "drop": "<path d=\"M12 2S5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13Z\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2\"/>"};
+  const icon = name => `<svg class="ui-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.leaf}</svg>`;
+  const routeIcon = k => ({inicio:"home",plantas:"leaf",planta:"leaf",atendimento:"stethoscope",calculadora:"calculator",identificar:"scan",cuidados:"shield",glossario:"book",instalar:"download",mais:"menu",emergencia:"phone",perfil:"user",sobre:"book"}[k] || "leaf");
+
+  // Reações visuais usam os alertas existentes; não alteram a avaliação clínica.
+  const avatar = (kind = 'farmaceutico') => `<span class="character-avatar avatar-${kind}" aria-hidden="true"></span>`;
+  const pharmacistCard = (state, title, text) => `<aside class="pharmacist-guide guide-${state}" aria-label="Orientação farmacêutica">${avatar(state === 'welcome' ? 'farmaceutico' : 'atencao')}<div><span class="eyebrow">CUIDADO FARMACÊUTICO</span><h2>${title}</h2><p>${text}</p></div></aside>`;
+  let reactionObserver = null;
+  function connectReactions(route) {
+    if (route !== 'calculadora' || !main.querySelector('#cout')) return;
+    const panel = document.createElement('div');
+    main.querySelector('.page-head').after(panel);
+    let previous = '';
+    const update = () => {
+      const output = main.querySelector('#cout');
+      const state = output.querySelector('.risk > .callout.bad') ? 'risk' : output.querySelector('.risk > .callout.warn, .callout.warn') ? 'attention' : 'welcome';
+      if (state === previous) return; previous = state;
+      panel.innerHTML = pharmacistCard(state, state === 'risk' ? 'Risco elevado: vamos revisar o resultado.' : state === 'attention' ? 'Vamos revisar os alertas?' : 'O cálculo é uma etapa. O cuidado vai além.', state !== 'welcome' ? 'Há pontos de atenção no resultado abaixo. A avaliação farmacêutica ajuda a interpretar os alertas e orientar o uso individual.' : 'O farmacêutico conecta o resultado ao histórico, aos medicamentos em uso e às necessidades de cada pessoa.');
+    };
+    reactionObserver = new MutationObserver(update);
+    reactionObserver.observe(main.querySelector('#cout'), {childList:true, subtree:true});
+    update();
+  }
 
   // ---------- utilitários ----------
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -37,13 +61,13 @@
     const p = perfil();
     const nav = NAV[p === 'pro' ? 'pro' : 'pac'];
     const on = k => (k === active || (active === 'planta' && k === 'plantas')) ? ' class="active"' : '';
-    document.getElementById('topnav').innerHTML = p ? nav.top.map(([k, l]) => `<a href="#/${k}"${on(k)}>${l}</a>`).join('') : '';
+    document.getElementById('topnav').innerHTML = p ? [['inicio', 'Visão geral'], ...nav.top, ['mais', 'Mais opções']].map(([k, l]) => `<a href="#/${k === 'inicio' ? '' : k}"${on(k)}>${icon(routeIcon(k))}<span>${l}</span></a>`).join('') : '';
     const tb = document.getElementById('tabbar');
-    tb.innerHTML = p ? nav.tab.map(([k, i, l]) => `<a href="#/${k === 'inicio' ? '' : k}"${on(k)}><span aria-hidden="true">${i}</span>${l}</a>`).join('') : '';
+    tb.innerHTML = p ? nav.tab.map(([k, i, l]) => `<a href="#/${k === 'inicio' ? '' : k}"${on(k)}><span aria-hidden="true">${icon(routeIcon(k))}</span>${l}</a>`).join('') : '';
     tb.hidden = !p; document.body.classList.toggle('no-tabbar', !p);
     const chip = document.getElementById('perfilChip');
     chip.hidden = !p;
-    chip.textContent = p === 'pro' ? '🩺 Profissional' : '🧑 Paciente';
+    chip.innerHTML = avatar(p === 'pro' ? 'farmaceutico' : 'paciente') + (p === 'pro' ? 'Profissional' : 'Paciente');
     chip.title = 'Trocar perfil de uso';
   }
 
@@ -128,14 +152,14 @@
   function alertBadges(p, max = 6) {
     const r = p.riscos, b = [];
     b.push(p.rx ? '<span class="badge warn" title="Venda sob prescrição médica">℞ Prescrição</span>' : '<span class="badge info" title="Isento de prescrição">MIP</span>');
-    if (r.gestante && r.gestante[0] === 'c') b.push('<span class="badge bad" title="Contraindicado na gestação">🤰 Gestação</span>');
-    else if (r.gestante) b.push('<span class="badge warn" title="Cautela na gestação">🤰 Cautela</span>');
-    if (r.m_anticoag || r.coagulopatia) b.push(`<span class="badge ${(r.m_anticoag || r.coagulopatia)[0] === 'c' ? 'bad' : 'warn'}" title="Risco de sangramento / anticoagulantes">🩸 Sangramento</span>`);
+    if (r.gestante && r.gestante[0] === 'c') b.push('<span class="badge bad" title="Contraindicado na gestação">Gestação</span>');
+    else if (r.gestante) b.push('<span class="badge warn" title="Cautela na gestação">Cautela</span>');
+    if (r.m_anticoag || r.coagulopatia) b.push(`<span class="badge ${(r.m_anticoag || r.coagulopatia)[0] === 'c' ? 'bad' : 'warn'}" title="Risco de sangramento / anticoagulantes">Sangramento</span>`);
     const graves = Object.keys(r).filter(k => k.startsWith('m_') && r[k][0] === 'c').length;
-    if (graves) b.push(`<span class="badge bad" title="Interações medicamentosas contraindicadas">💊 ${graves} interaç${graves > 1 ? 'ões' : 'ão'} grave${graves > 1 ? 's' : ''}</span>`);
+    if (graves) b.push(`<span class="badge bad" title="Interações medicamentosas contraindicadas">${graves} interaç${graves > 1 ? 'ões' : 'ão'} grave${graves > 1 ? 's' : ''}</span>`);
     if (r.hepatopatia && r.hepatopatia[0] === 'c') b.push('<span class="badge bad" title="Contraindicado em doença hepática">Fígado</span>');
-    if (p.idade) b.push(`<span class="badge ${p.idade.nivel === 'c' ? 'bad' : 'warn'}" title="${esc(p.idade.txt)}">👶 ≥ ${p.idade.min} anos</span>`);
-    if (/hypericum/.test(p.id)) b.push('<span class="badge warn" title="Fotossensibilização">☀️ Sol</span>');
+    if (p.idade) b.push(`<span class="badge ${p.idade.nivel === 'c' ? 'bad' : 'warn'}" title="${esc(p.idade.txt)}">≥ ${p.idade.min} anos</span>`);
+    if (/hypericum/.test(p.id)) b.push('<span class="badge warn" title="Fotossensibilização">Sol</span>');
     if (/T[óo]pica|externo/i.test(p.via) && !/Oral/.test(p.via)) b.push('<span class="badge ok">Uso externo</span>');
     return b.slice(0, max).join('');
   }
@@ -149,6 +173,7 @@
     return { name: parts[0] || 'inicio', arg: parts[1], q: new URLSearchParams(qs || '') };
   }
   function go() {
+    reactionObserver?.disconnect(); reactionObserver = null;
     const r = parseHash();
     let view = routes[r.name] || routes.inicio;
     if (!perfil() && r.name !== 'emergencia') view = routes.perfil;          // 1ª abertura: escolher perfil
@@ -156,7 +181,9 @@
     renderNav(r.name);
     // contêiner novo a cada navegação: descarta ouvintes de eventos da página anterior
     const fresh = main.cloneNode(false); main.replaceWith(fresh); main = fresh;
+    document.body.dataset.page = view === routes.perfil ? "perfil" : r.name;
     view(r);
+    if (view !== routes.restrito) connectReactions(r.name);
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }
@@ -170,28 +197,29 @@
     const atual = perfil();
     main.innerHTML = `
       <section class="gate">
-        <img class="gate-logo" src="assets/icons/logo.png" alt="Logo FitoTech - UFAM" width="200" height="200">
-        <h1>Bem-vindo ao FitoTech - UFAM</h1>
+        <div class="gate-welcome"><div>        <div class="gate-brand"><img class="gate-logo" src="assets/icons/icon-192.png" alt="Logo FitoTech - UFAM" width="80" height="80"><span class="eyebrow">CIÊNCIA · NATUREZA · TECNOLOGIA</span></div>
+        <h1>O conhecimento floresce aqui.</h1>
         <p class="muted">Cartilha Digital de Fitoterapia baseada no Memento Fitoterápico da Farmacopeia Brasileira (Anvisa).</p>
+</div><img class="gate-people" src="assets/illustrations/orientacao-farmaceutica.webp" alt="Farmacêutico orienta uma paciente, em bonecos 3D de vinil."></div>
         <h2 class="sec">Como você vai usar o aplicativo?</h2>
         <div class="grid grid-2 sec">
           <div class="card gate-opt ${atual === 'pac' ? 'sel' : ''}">
-            <div class="gate-ico">🧑</div>
+            <div class="profile-portrait">${avatar("paciente")}</div>
             <h3>Sou paciente / cidadão</h3>
             <p class="small">Informações de <b>segurança</b> sobre as plantas, quando <b>não</b> usar, identificação e telefones de emergência.</p>
             <p class="small muted">Doses, cálculos de preparo, formulações e receituário ficam restritos a profissionais de saúde.</p>
             <button class="btn ghost" type="button" id="goPac">Entrar como paciente</button>
           </div>
           <div class="card gate-opt ${atual === 'pro' ? 'sel' : ''}">
-            <div class="gate-ico">🩺</div>
-            <h3>Sou profissional de saúde</h3>
+            <div class="profile-portrait">${avatar("farmaceutico")}</div>
+            <h3>Sou farmacêutico / profissional de saúde</h3>
             <p class="small">Médicos, enfermeiros, farmacêuticos, nutricionistas e estudantes da área sob supervisão. Acesso completo: posologia, manipulação, calculadora, atendimento e receituário.</p>
             <label class="check"><input type="checkbox" id="decl"><span class="small">Declaro que sou profissional de saúde habilitado(a) ou estudante da área sob supervisão, e que usarei as informações com responsabilidade.</span></label>
             <button class="btn sec" type="button" id="goPro" disabled>Entrar como profissional</button>
           </div>
         </div>
         <div class="callout warn sec small"><b>Por que perguntamos?</b> A indicação de dose, a prescrição e a manipulação de fitoterápicos devem ser feitas por profissionais habilitados. Preparar ou usar plantas por conta própria, em doses ou formas inadequadas, pode causar intoxicação, interações perigosas com medicamentos e outros danos à saúde.</div>
-        <p class="center small sec"><a href="#/emergencia">☎ Emergência / intoxicação</a></p>
+        <p class="center small sec"><a href="#/emergencia">☎ Emergência / intoxicação</a></p><div class="institution-signature"><img src="assets/institutional/ufam.png" width="44" height="58" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto acadêmico · Curso de Farmácia</small></span></div>
         <p class="center small muted">FitoTech - UFAM · versão ${APP_VERSION}</p>
       </section>`;
     const decl = main.querySelector('#decl'), goPro = main.querySelector('#goPro');
@@ -203,7 +231,7 @@
     setTitle('Área restrita');
     main.innerHTML = `
       <div class="card gate center" style="margin-top:20px">
-        <div class="gate-ico">🔒</div>
+        <div class="gate-ico">${icon("lock")}</div>
         <h1>Área restrita a profissionais de saúde</h1>
         <p>Cálculo de doses, formulações, atendimento e receituário exigem formação técnica. Usar plantas em dose ou preparo errado pode causar intoxicação.</p>
         <p><b>Converse com um profissional de saúde</b> (unidade básica de saúde, farmácia, médico, enfermeiro, nutricionista) antes de usar qualquer planta medicinal.</p>
@@ -240,14 +268,21 @@
     setTitle('');
     const sug = ['ansiedade', 'insônia', 'dispepsia', 'tosse', 'constipação', 'náusea', 'menopausa', 'ferida', 'dor articular', 'gengivite'];
     main.innerHTML = `
-      <section class="hero">
-        <div class="hero-top"><img src="assets/icons/icon-192.png" alt="" width="64" height="64"><div><h1>FitoTech - UFAM</h1>
-        <p>${isPro() ? 'Cartilha Digital de Fitoterapia: as 28 espécies do Memento Fitoterápico (Anvisa), com segurança em primeiro lugar.' : 'Conheça as plantas medicinais do Memento Fitoterápico (Anvisa) e saiba quando elas podem fazer mal.'}</p></div></div>
-        <form class="searchbox" id="homeSearch" role="search">
-          <input type="search" name="q" placeholder="Buscar por nome popular, científico ou sintoma…" aria-label="Buscar planta" autocomplete="off">
-        </form>
-        <div class="chips" style="margin-top:10px">${sug.map(s => `<a class="chip" href="#/plantas?q=${encodeURIComponent(s)}">${esc(s)}</a>`).join('')}</div>
+      <div class="dashboard-intro"><div><span class="eyebrow">SEU ESPAÇO DE FITOTERAPIA</span><h1>Explore. Conheça. Cuide.</h1></div><a class="platform-link" href="#/instalar">${icon('download')} Instalar FitoTech</a></div>
+      <section class="hero dashboard-hero">
+        <div class="hero-copy"><span class="hero-label">${icon('leaf')} NATUREZA COM FUNDAMENTO</span>
+          <h2>Ciência que aproxima.<br><em>Cuidado que acolhe.</em></h2>
+          <p>Explore as 28 espécies do Memento Fitoterápico. Conhecimento científico para um cuidado mais consciente.</p>
+          <form class="searchbox" id="homeSearch" role="search">${icon('search')}
+            <input type="search" name="q" placeholder="Busque uma planta ou sintoma…" aria-label="Buscar planta" autocomplete="off"><button type="submit" aria-label="Pesquisar">${icon('arrow')}</button>
+          </form>
+          <div class="hero-source">${icon('book')} Memento Fitoterápico · Anvisa, 2016</div>
+        </div>
+        <div class="hero-art people-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><img src="assets/illustrations/orientacao-farmaceutica.webp" alt="Farmacêutico e paciente conversam sobre plantas medicinais, em ilustração 3D acolhedora."><span class="people-caption">${icon('heart')} Conhecimento que cuida de pessoas</span></div>
       </section>
+      <div class="discovery-topics"><span class="small muted">Explore por tema</span><div class="chips">${sug.slice(0,6).map(t => `<a class="chip" href="#/plantas?q=${encodeURIComponent(t)}">${esc(t)}</a>`).join('')}</div></div>
+      ${pharmacistCard('welcome', 'Seu cuidado merece um farmacêutico.', 'Escuta, conhecimento científico e orientação individual: a presença do farmacêutico faz parte de um cuidado mais próximo e consciente.')}
+      <div class="section-heading"><h2>Como podemos ajudar?</h2><span>Seu próximo passo começa aqui</span></div>
       <div class="grid grid-3">
         ${(isPro() ? [
           ['#/atendimento', '✚', 'Atendimento clínico', 'Sinais vitais, comorbidades e medicamentos → triagem de segurança e receituário.'],
@@ -263,8 +298,10 @@
           ['#/glossario', 'Aa', 'Glossário', 'O que é infusão, decocção, tintura…'],
           ['#/emergencia', '☎', 'Emergência e intoxicação', 'SAMU 192, Disque-Intoxicação 0800 722 6001 e outros.'],
           ['#/perfil', '🩺', 'Sou profissional de saúde', 'Acesso a doses, calculadora, atendimento e receituário.']
-        ]).map(([h, i, t, d]) => `<a class="card tile" href="${h}"><span class="ico">${i}</span><span><h3>${t}</h3><p>${d}</p></span></a>`).join('')}
+        ]).map(([h, i, t, d]) => `<a class="card tile" href="${h}"><span class="ico">${icon(routeIcon(h.replace("#/", "")))}</span><span><h3>${t}</h3><p>${d}</p></span><span class="tile-arrow">${icon("arrow")}</span></a>`).join('')}
       </div>
+      <div class="section-heading"><div><span class="eyebrow">BIBLIOTECA BOTÂNICA</span><h2>Conheça de perto</h2></div><a href="#/plantas">Ver todas as plantas ${icon('arrow')}</a></div>
+      <div class="featured-plants">${['matricaria-chamomilla','aloe-vera','ginkgo-biloba','passiflora-incarnata'].map(id => byId[id]).filter(Boolean).map(p => `<a class="featured-plant" href="#/planta/${p.id}"><div class="featured-photo">${capaImg(p, 'loading="lazy"')}</div><div class="featured-body"><h3>${esc(p.nome)}</h3><p class="sci">${esc(p.cientifico)}</p><span>Explorar espécie ${icon('arrow')}</span></div></a>`).join('')}</div>
       <div class="card callout bad emerg-strip" style="margin-top:12px">
         <span><strong>Suspeita de intoxicação?</strong> Ligue para o Disque-Intoxicação (Anvisa) ou SAMU.</span>
         <span class="btn-row"><a class="btn danger small" href="tel:08007226001">0800 722 6001</a><a class="btn danger small" href="tel:192">SAMU 192</a></span>
@@ -337,6 +374,7 @@
     const secoes = pro ? SECTIONS : SECTIONS.filter(([k]) => SEC_PAC.includes(k));
     main.innerHTML = `
       <p><a href="#/plantas">← ${pro ? 'Espécies' : 'Plantas'}</a></p>
+      ${pharmacistCard(contra.length ? 'attention' : 'welcome', contra.length ? 'Esta espécie tem contraindicações. Vamos olhar com atenção.' : 'Conhecer a planta é só o começo do cuidado.', 'O farmacêutico ajuda a interpretar as informações da espécie e relacioná-las ao histórico e aos medicamentos em uso. Consulte os alertas da ficha abaixo.')}
       <div class="ficha-top">
         <div class="gallery">
           <div class="main"><div class="gbg" id="gbg" style="background-image:url('${foto(p)}')"></div><img id="gimg" src="${capaSrc(p)}" alt="${esc(p.nome)}">
@@ -563,6 +601,7 @@
       const n = s => avals.filter(a => a.status === s).length;
       const ativos = [...Object.keys(v.auto), ...Object.keys(st.cond)].filter((k, i, arr) => arr.indexOf(k) === i);
       box.innerHTML = `
+        ${pharmacistCard(n('bad') || n('warn') ? 'attention' : 'welcome', n('bad') || n('warn') ? 'A triagem tem alertas para revisar.' : 'O olhar farmacêutico faz a diferença.', 'Acompanhe os resultados abaixo. A orientação farmacêutica considera cada pessoa e os limites das informações disponíveis.')}
         <h2>Resultado da triagem ${q && !showAll ? `para "${esc(q)}"` : '(todas as espécies)'}</h2>
         <p class="small muted">Fatores considerados: ${ativos.length ? ativos.map(k => esc(COND[k] || k)).join(', ') : 'nenhum marcado'}${st.pac.idade ? ` · idade ${esc(st.pac.idade)} anos` : ''}.</p>
         <div class="badges sec"><span class="badge ok">✔ ${n('ok')} compatível(is)</span><span class="badge warn">⚠ ${n('warn')} com atenção</span><span class="badge bad">⛔ ${n('bad')} contraindicada(s)</span></div>
@@ -776,7 +815,9 @@
     };
     const buildPreset = () => {
       const c = s.p.calc[s.i]; const d = cin.querySelector('#cdyn');
-      const freqN = parseInt((c.freq.match(/\d+/) || ['1'])[0], 10);
+      // A frequência pode começar pelo volume (ex.: 150 mL, 3 a 4 vezes).
+      const frequency = c.freq.match(/(\d+)(?:\s*(?:a|–|-)\s*(\d+))?\s*vez(?:es)?/i);
+      const freqN = frequency ? Number(frequency[1]) : 1;
       if (c.tipo === 'tintura') {
         d.innerHTML = `<div class="fields sec"><div class="field"><label for="cdose">Tintura por dose (mL)</label><input id="cdose" type="number" step="0.5" min="${c.mlT[0]}" max="${c.mlT[1]}" value="${c.mlT[0]}"></div>
           <div class="field"><label for="cml">Água (mL)</label><input id="cml" type="number" value="${c.ml}"></div>
@@ -1019,16 +1060,16 @@
       <div class="page-head"><h1>Instalar o aplicativo</h1><p>Todas as versões abrem o mesmo site, sempre atualizado. Sem internet, usam a última versão salva.</p></div>
       ${standalone ? '<div class="callout ok">✔ Você já está usando o app instalado.</div>' : ''}
       <div class="grid grid-2 sec">
-        <div class="card" ${plat === 'android' ? 'style="border-color:var(--brand)"' : ''}><h2>🤖 Android</h2>
+        <div class="card" ${plat === 'android' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} Android</h2>
           <p>Baixe o APK e permita “instalar apps de fontes desconhecidas”. Ou, no Chrome, use “Instalar app”.</p>
           <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech.apk')}">Baixar APK</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
-        <div class="card" ${plat === 'windows' ? 'style="border-color:var(--brand)"' : ''}><h2>🪟 Windows</h2>
+        <div class="card" ${plat === 'windows' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("monitor")} Windows</h2>
           <p>Baixe o instalador (.exe). Ou, no Edge/Chrome, clique no ícone de instalar na barra de endereço.</p>
           <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech-Setup.exe')}">Baixar para Windows</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
-        <div class="card" ${plat === 'ios' ? 'style="border-color:var(--brand)"' : ''}><h2>🍎 iPhone / iPad</h2>
+        <div class="card" ${plat === 'ios' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} iPhone / iPad</h2>
           <ol class="steps"><li>Abra este site no <b>Safari</b>.</li><li>Toque em <b>Compartilhar</b> (□↑).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li></ol>
           <p class="small muted">O ícone abre em tela cheia, como um app. (Publicar na App Store exige conta Apple Developer paga.)</p></div>
-        <div class="card"><h2>🌐 Site</h2><p>Acesse de qualquer navegador:</p><p><code>${esc(location.origin + location.pathname)}</code></p>
+        <div class="card"><h2>${icon("globe")} Site</h2><p>Acesse de qualquer navegador:</p><p><code>${esc(location.origin + location.pathname)}</code></p>
           <div class="btn-row"><button class="btn ghost" type="button" id="copyUrl">Copiar link</button>${rel ? `<a class="btn ghost" href="${rel}" target="_blank" rel="noopener">Todas as versões ↗</a>` : ''}</div></div>
       </div>`;
     main.addEventListener('click', async e => {
@@ -1049,7 +1090,7 @@
       ['#/sobre', 'ⓘ', 'Sobre e referências', 'Fontes, equipe e avisos.'],
       ...(isPro() ? [] : [['#/cuidados', '♥', 'Cuidados com plantas', 'O que fazer e o que evitar.']]),
       ['#/perfil', '👤', 'Trocar perfil', isPro() ? 'Você está como profissional de saúde.' : 'Você está como paciente.']
-    ].map(([h, i, t, d]) => `<a class="card tile" href="${h}"><span class="ico">${i}</span><span><h3>${t}</h3><p>${d}</p></span></a>`).join('')}</div>`;
+    ].map(([h, i, t, d]) => `<a class="card tile" href="${h}"><span class="ico">${icon(routeIcon(h.replace("#/", "")))}</span><span><h3>${t}</h3><p>${d}</p></span><span class="tile-arrow">${icon("arrow")}</span></a>`).join('')}</div>`;
   };
   routes.sobre = () => {
     setTitle('Sobre');
@@ -1063,8 +1104,9 @@
           <li>Sociedade Brasileira de Cardiologia. <i>Diretrizes Brasileiras de Hipertensão Arterial</i> – 2020 (classificação da PA).</li>
           <li>OMS — classificação do IMC; Lipschitz (1994) — IMC em idosos.</li></ul>
         <h2>Fotos</h2><p class="small">Wikimedia Commons (licenças livres; o link de cada foto aparece na ficha) e anotações da equipe.</p>
+        <div class="institution-signature"><img src="assets/institutional/ufam.png" width="52" height="68" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto acadêmico · Curso de Farmácia</small></span></div><h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
         <h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
-        <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
+        <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Nova identidade visual: personagens 3D, logo renovada, ícones e navegação lateral. A v.0 foi a primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
         <h2>Privacidade</h2><p class="small">Nenhum dado é enviado a servidores. Atendimentos e contatos ficam somente no armazenamento local do aparelho.</p>
         <div class="callout warn small">Ferramenta educacional e de apoio à decisão. Não substitui o julgamento clínico, a monografia oficial ou a bula do produto.</div>
         <div class="btn-row"><button class="btn ghost small" type="button" id="clearAll">Apagar dados salvos neste aparelho</button></div>
@@ -1086,5 +1128,6 @@
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
+  themeBtn.innerHTML = icon('moon');
   go();
 })();

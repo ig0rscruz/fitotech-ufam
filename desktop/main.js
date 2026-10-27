@@ -12,7 +12,7 @@ const LOCAL = path.join(__dirname, 'www', 'index.html');
 function createWindow() {
   const win = new BrowserWindow({
     width: 1280, height: 860, minWidth: 360, minHeight: 500,
-    title: 'FitoTech - UFAM', autoHideMenuBar: true, backgroundColor: '#f4f6f3',
+    title: 'FitoTech - UFAM', autoHideMenuBar: true, backgroundColor: '#f5f8f8',
     icon: path.join(__dirname, 'www', 'assets', 'icons', 'icon-256.png'),
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
   });

@@ -17,7 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       site: ${{ steps.u.outputs.site }}
+      ver: ${{ steps.v.outputs.ver }}
+      tag: ${{ steps.v.outputs.tag }}
     steps:
+      - uses: actions/checkout@v4
+      - id: v
+        shell: bash
+        run: |
+          VER=$(grep -oP "APP_VERSION = '\K[^']+" app/js/app.js || echo "v.0")
+          echo "ver=$VER" >> "$GITHUB_OUTPUT"
+          echo "tag=$(echo "$VER" | tr -d '.')-build${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "Versão: $VER"
       - id: u
         shell: bash
         run: |
@@ -74,15 +84,15 @@ jobs:
         with: { name: windows, path: desktop/dist/FitoTech-Setup.exe }
 
   release:
-    needs: [android, windows]
+    needs: [url, android, windows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with: { path: out, merge-multiple: true }
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.0.${{ github.run_number }}
-          name: FitoTech - UFAM v.0 (build ${{ github.run_number }})
+          tag_name: ${{ needs.url.outputs.tag }}
+          name: FitoTech - UFAM ${{ needs.url.outputs.ver }} (build ${{ github.run_number }})
           make_latest: true
           body: |
             - **Android:** baixe `FitoTech.apk` e permita instalar apps de fontes desconhecidas.
