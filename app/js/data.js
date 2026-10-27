@@ -2158,6 +2158,10 @@ window.PLANTAS = [
    "dirige": [
     "a",
     "Prejudica reflexos: não dirigir."
+   ],
+   "m_antidepressivo": [
+    "a",
+    "Potencializa psicofármacos de ação central (Memento), como antidepressivos."
    ]
   },
   "idade": {

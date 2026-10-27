@@ -462,6 +462,7 @@
 
   // ---------- ATENDIMENTO ----------
   const CASOS = [
+    { titulo: '★ Caso da apresentação: insônia + HAS + diabetes', pac: { nome: 'M.F.S.', idade: 56, sexo: 'F', peso: 78, altura: 158, pas: 148, pad: 94, fc: 88, glic: 132, temp: 36.5, spo2: 97 }, cond: ['diabetes', 'm_antihipertensivo', 'm_hipoglicemiante', 'm_antidepressivo'], queixa: 'insônia', meds: 'Losartana 50 mg 1x/dia; Metformina 850 mg 2x/dia; Sertralina 50 mg 1x/dia' },
     { titulo: 'Climatério + hipertensão', pac: { nome: 'M.S.', idade: 52, sexo: 'F', peso: 72, altura: 160, pas: 150, pad: 95, fc: 82 }, cond: ['m_antihipertensivo'], queixa: 'fogacho', meds: 'Losartana 50 mg 1x/dia' },
     { titulo: 'HIV em TARV + resfriado', pac: { nome: 'J.P.', idade: 34, sexo: 'M', peso: 68, altura: 175, pas: 118, pad: 76, fc: 88, temp: 37.6 }, cond: ['hiv', 'm_antirretroviral'], queixa: 'resfriado', meds: 'Tenofovir + lamivudina + dolutegravir' },
     { titulo: 'Gestante com ansiedade', pac: { nome: 'A.C.', idade: 28, sexo: 'F', peso: 64, altura: 165, pas: 110, pad: 70, fc: 92 }, cond: ['gestante'], queixa: 'ansiedade', meds: 'Sulfato ferroso, ácido fólico' },
