@@ -248,3 +248,10 @@ body.no-tabbar { padding-bottom: 0; }
 .risk-ci { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
 .risk-ci summary { cursor: pointer; font-weight: 700; font-size: .92rem; }
 .risk-ci ul { margin-top: 8px; }
+
+/* capas 1:1 (1080 × 1080): planta inteira, sem corte */
+.plant-card .ph { aspect-ratio: 1 / 1; }
+.plant-card .ph img { object-fit: cover; }
+.gallery .main { aspect-ratio: 1 / 1; }
+.gallery .main.is-capa img { height: 94%; margin: 3% auto 0; }
+@media (min-width: 820px) { .ficha-top { grid-template-columns: 440px 1fr; } }

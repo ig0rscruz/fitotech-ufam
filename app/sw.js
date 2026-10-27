@@ -1,6 +1,6 @@
 /* Service worker: busca sempre a versão online (rede primeiro) e guarda uma cópia
    para funcionar sem internet. Imagens: cache primeiro. Altere VERSION ao publicar mudanças grandes. */
-const VERSION = 'fitotech-v2';
+const VERSION = 'fitotech-v3';
 const CORE = ['./', 'index.html', 'css/app.css', 'js/app.js', 'js/data.js', 'manifest.webmanifest', 'assets/icons/icon-192.png'];
 
 self.addEventListener('install', e => {
