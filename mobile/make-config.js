@@ -4,7 +4,7 @@ const fs = require('fs');
 const url = process.env.SITE_URL || '';
 const cfg = {
   appId: 'br.edu.ufam.fitotech',
-  appName: 'FitoTech',
+  appName: 'FitoTech - UFAM',
   webDir: 'www',
   android: { allowMixedContent: false },
   plugins: { SplashScreen: { launchShowDuration: 800, backgroundColor: '#ffffff' } }
