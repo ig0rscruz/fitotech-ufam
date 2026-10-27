@@ -1,12 +1,11 @@
-# Publica o site no GitHub Pages junto com os instaladores (APK e .exe) em app/downloads/.
-# Não usa GitHub Releases: os Releases sempre anexam o código-fonte (zip), que não deve ser distribuído.
-# Os apps só são recompilados quando desktop/ ou mobile/ mudam (cache); senão, reaproveita a última compilação.
-# Pré-requisito (uma vez): Settings → Pages → Source: "GitHub Actions".
-name: Publicar site e apps
+# Publica a pasta app/ no GitHub Pages a cada push na main.
+# Pré-requisito (uma vez): Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Publicar site (GitHub Pages)
 
 on:
   push:
     branches: [main]
+    paths: ['app/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -19,88 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  url:
-    runs-on: ubuntu-latest
-    outputs:
-      site: ${{ steps.u.outputs.site }}
-    steps:
-      - id: u
-        shell: bash
-        run: |
-          if [ -n "${{ vars.SITE_URL }}" ]; then echo "site=${{ vars.SITE_URL }}" >> "$GITHUB_OUTPUT"; exit 0; fi
-          OWNER="${GITHUB_REPOSITORY_OWNER,,}"; REPO="${GITHUB_REPOSITORY#*/}"
-          if [ "${REPO,,}" = "$OWNER.github.io" ]; then URL="https://$OWNER.github.io/"; else URL="https://$OWNER.github.io/$REPO/"; fi
-          echo "site=$URL" >> "$GITHUB_OUTPUT"; echo "Site: $URL"
-
-  android:
-    needs: url
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - id: cache
-        uses: actions/cache@v4
-        with:
-          path: mobile/FitoTech.apk
-          key: apk-${{ hashFiles('mobile/**', '.github/workflows/pages.yml') }}
-      - if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
-      - name: Compilar APK
-        if: steps.cache.outputs.cache-hit != 'true'
-        working-directory: mobile
-        env: { SITE_URL: "${{ needs.url.outputs.site }}" }
-        run: |
-          npm install --no-audit --no-fund
-          npm run prepare-www
-          npm run config
-          npx cap add android
-          npx capacitor-assets generate --android --iconBackgroundColor '#ffffff' --splashBackgroundColor '#ffffff' || true
-          npx cap sync android
-          cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk ../FitoTech.apk
-      - uses: actions/upload-artifact@v4
-        with: { name: android, path: mobile/FitoTech.apk }
-
-  windows:
-    needs: url
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - id: cache
-        uses: actions/cache@v4
-        with:
-          path: desktop/dist/FitoTech-Setup.exe
-          key: exe-${{ hashFiles('desktop/**', '.github/workflows/pages.yml') }}
-      - if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Compilar instalador Windows
-        if: steps.cache.outputs.cache-hit != 'true'
-        working-directory: desktop
-        shell: bash
-        run: |
-          echo "{\"siteUrl\":\"${{ needs.url.outputs.site }}\"}" > config.json
-          npm install --no-audit --no-fund
-          npm run dist
-      - uses: actions/upload-artifact@v4
-        with: { name: windows, path: desktop/dist/FitoTech-Setup.exe }
-
   deploy:
-    needs: [android, windows]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with: { path: app/downloads, merge-multiple: true }
-      - run: ls -la app/downloads
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
-        with: { path: app }
+        with:
+          path: app
       - id: deployment
         uses: actions/deploy-pages@v4

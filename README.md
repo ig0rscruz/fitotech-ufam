@@ -7,7 +7,7 @@ Protótipo de aplicativo para profissionais de saúde com as **28 espécies do M
 ## Acesso
 
 - **Site:** https://ig0rscruz.github.io/fitotech-ufam/
-- **Android (APK) e Windows (.exe):** página **Apps** dentro do site (os instaladores ficam em `downloads/` no próprio site)
+- **Android (APK) e Windows (.exe):** https://github.com/ig0rscruz/fitotech-ufam/releases/latest
 - **iPhone:** abrir o site no Safari → Compartilhar → Adicionar à Tela de Início
 
 ## Perfis de uso: paciente × profissional
@@ -62,14 +62,14 @@ mobile/     ← app Android (Capacitor)
 3. No GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Depois, em **Actions**, rode de novo "Publicar site" se ele tiver falhado antes desse ajuste.
 4. Pronto:
    - Site: `https://SEU-USUARIO.github.io/fitotech/`
-   - APK e instalador Windows: publicados junto com o site em `downloads/` pelo workflow "Publicar site e apps". Não usamos GitHub Releases, porque eles sempre anexam o código-fonte.
+   - APK e instalador Windows: aba **Releases** (gerados automaticamente em ~10 min pelo workflow "Gerar apps").
 
 Os PDFs ficam fora do repositório (`.gitignore`).
 
 ## Instalar
 
-- **Android:** baixar `FitoTech.apk` na página Apps do site (permitir "fontes desconhecidas"), ou no Chrome → "Instalar app".
-- **Windows:** baixar `FitoTech-Setup.exe` na página Apps do site, ou no Edge/Chrome → ícone "Instalar".
+- **Android:** baixar `FitoTech.apk` em Releases (permitir "fontes desconhecidas"), ou no Chrome → "Instalar app".
+- **Windows:** baixar `FitoTech-Setup.exe` em Releases, ou no Edge/Chrome → ícone "Instalar".
 - **iPhone/iPad:** abrir o site no **Safari → Compartilhar → Adicionar à Tela de Início**. (Um app na App Store exigiria Mac e conta Apple Developer paga.)
 
 A página **Apps** dentro do próprio site mostra esses links automaticamente.

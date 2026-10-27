@@ -1052,9 +1052,8 @@
   })();
   routes.instalar = () => {
     setTitle('Apps');
-    // instaladores publicados junto com o site (sem Releases: o código-fonte não é distribuído)
-    const rel = /^https?:/.test(location.protocol) ? 'downloads' : '';
-    const dl = f => `downloads/${f}`;
+    const rel = CFG.owner ? `https://github.com/${CFG.owner}/${CFG.repo}/releases/latest` : '';
+    const dl = f => rel ? `${rel}/download/${f}` : '';
     const ua = navigator.userAgent;
     const plat = /android/i.test(ua) ? 'android' : /iphone|ipad|ipod/i.test(ua) ? 'ios' : /windows/i.test(ua) ? 'windows' : 'outro';
     const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -1064,10 +1063,10 @@
       <div class="grid grid-2 sec">
         <div class="card" ${plat === 'android' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} Android</h2>
           <p>Baixe o APK e permita “instalar apps de fontes desconhecidas”. Ou, no Chrome, use “Instalar app”.</p>
-          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech.apk')}">Baixar APK</a>` : '<span class="badge warn">Disponível na versão publicada do site</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
+          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech.apk')}">Baixar APK</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
         <div class="card" ${plat === 'windows' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("monitor")} Windows</h2>
           <p>Baixe o instalador (.exe). Ou, no Edge/Chrome, clique no ícone de instalar na barra de endereço.</p>
-          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech-Setup.exe')}">Baixar para Windows</a>` : '<span class="badge warn">Disponível na versão publicada do site</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
+          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech-Setup.exe')}">Baixar para Windows</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
         <div class="card" ${plat === 'ios' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} iPhone / iPad</h2>
           <ol class="steps"><li>Abra este site no <b>Safari</b>.</li><li>Toque em <b>Compartilhar</b> (□↑).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li></ol>
           <p class="small muted">O ícone abre em tela cheia, como um app. (Publicar na App Store exige conta Apple Developer paga.)</p></div>
