@@ -92,7 +92,7 @@ Tudo das espécies está em `app/js/data.js`:
 ### Imagens
 
 - **Capas ilustradas:** `app/assets/img/capas/<id-da-especie>.jpg` (ex.: `glycine-max.jpg`). Na ficha, a ilustração aparece na frente e a foto real desfocada ao fundo; as fotos reais ficam na galeria.
-- **Falta a capa da espinheira-santa (`maytenus-ilicifolia.jpg`)** — enquanto isso, o app mostra a foto real. Basta salvar o arquivo com esse nome (JPG quadrado, ~900 px) na pasta `capas`.
+- As 28 espécies têm capa. Para trocar uma, salve o arquivo com o id da espécie (JPG 1080 × 1080) na pasta `capas`.
 - A pasta `Imagens Renderizadas/` (originais de ~2 MB cada) não vai para o GitHub; as versões otimizadas já estão no app.
 
 > A foto real do **alecrim-pimenta** é de outra espécie do mesmo gênero (*Lippia graveolens*), porque não há foto livre de *L. sidoides* na Wikimedia. Substitua por uma foto da equipe.
