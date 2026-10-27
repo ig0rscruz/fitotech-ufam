@@ -219,7 +219,7 @@
           </div>
         </div>
         <div class="callout warn sec small"><b>Por que perguntamos?</b> A indicação de dose, a prescrição e a manipulação de fitoterápicos devem ser feitas por profissionais habilitados. Preparar ou usar plantas por conta própria, em doses ou formas inadequadas, pode causar intoxicação, interações perigosas com medicamentos e outros danos à saúde.</div>
-        <p class="center small sec"><a href="#/emergencia">☎ Emergência / intoxicação</a></p><div class="institution-signature"><img src="assets/institutional/ufam.png" width="44" height="58" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto acadêmico · Curso de Farmácia</small></span></div>
+        <p class="center small sec"><a href="#/emergencia">☎ Emergência / intoxicação</a></p><div class="institution-signature"><img src="assets/institutional/ufam.png" width="44" height="58" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto Acadêmico da Disciplina de Fitoterapia da Faculdade de Ciências Farmacêuticas</small></span></div>
         <p class="center small muted">FitoTech - UFAM · versão ${APP_VERSION}</p>
       </section>`;
     const decl = main.querySelector('#decl'), goPro = main.querySelector('#goPro');
@@ -1104,7 +1104,7 @@
           <li>Sociedade Brasileira de Cardiologia. <i>Diretrizes Brasileiras de Hipertensão Arterial</i> – 2020 (classificação da PA).</li>
           <li>OMS — classificação do IMC; Lipschitz (1994) — IMC em idosos.</li></ul>
         <h2>Fotos</h2><p class="small">Wikimedia Commons (licenças livres; o link de cada foto aparece na ficha) e anotações da equipe.</p>
-        <div class="institution-signature"><img src="assets/institutional/ufam.png" width="52" height="68" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto acadêmico · Curso de Farmácia</small></span></div><h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
+        <div class="institution-signature"><img src="assets/institutional/ufam.png" width="52" height="68" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto Acadêmico da Disciplina de Fitoterapia da Faculdade de Ciências Farmacêuticas</small></span></div><h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
         <h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
         <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Nova identidade visual: personagens 3D, logo renovada, ícones e navegação lateral. A v.0 foi a primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
         <h2>Privacidade</h2><p class="small">Nenhum dado é enviado a servidores. Atendimentos e contatos ficam somente no armazenamento local do aparelho.</p>
