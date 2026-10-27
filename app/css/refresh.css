@@ -97,3 +97,8 @@ main:focus { outline:none; }
 .institution-signature img,.institution-sidebar img { object-fit:contain; background:#fff; border-radius:6px; padding:3px; height:64px; width:50px; flex:none; }
 .institution-signature b { display:block; font-size:12px; }.institution-signature small { display:block; margin-top:4px; color:var(--muted); font-size:10px; }
 .institution-sidebar { flex-direction:row; align-items:center; gap:10px; }.institution-sidebar small { display:block; line-height:1.7; margin-top:5px; }.brand img { border-radius:0; }
+
+/* QR code na página Sobre */
+.qr-share { display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:var(--surface-2); border-radius:16px; padding:16px; }
+.qr-share img { width:180px; height:180px; background:#fff; padding:8px; border-radius:12px; flex:none; }
+.qr-share h2 { margin:0 0 6px; }

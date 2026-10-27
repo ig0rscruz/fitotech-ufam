@@ -1052,8 +1052,9 @@
   })();
   routes.instalar = () => {
     setTitle('Apps');
-    const rel = CFG.owner ? `https://github.com/${CFG.owner}/${CFG.repo}/releases/latest` : '';
-    const dl = f => rel ? `${rel}/download/${f}` : '';
+    // instaladores publicados junto com o site (sem Releases: o código-fonte não é distribuído)
+    const rel = /^https?:/.test(location.protocol) ? 'downloads' : '';
+    const dl = f => `downloads/${f}`;
     const ua = navigator.userAgent;
     const plat = /android/i.test(ua) ? 'android' : /iphone|ipad|ipod/i.test(ua) ? 'ios' : /windows/i.test(ua) ? 'windows' : 'outro';
     const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -1063,15 +1064,15 @@
       <div class="grid grid-2 sec">
         <div class="card" ${plat === 'android' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} Android</h2>
           <p>Baixe o APK e permita “instalar apps de fontes desconhecidas”. Ou, no Chrome, use “Instalar app”.</p>
-          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech.apk')}">Baixar APK</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
+          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech.apk')}">Baixar APK</a>` : '<span class="badge warn">Disponível na versão publicada do site</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
         <div class="card" ${plat === 'windows' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("monitor")} Windows</h2>
           <p>Baixe o instalador (.exe). Ou, no Edge/Chrome, clique no ícone de instalar na barra de endereço.</p>
-          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech-Setup.exe')}">Baixar para Windows</a>` : '<span class="badge warn">Link disponível após publicar no GitHub</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
+          <div class="btn-row">${rel ? `<a class="btn" href="${dl('FitoTech-Setup.exe')}">Baixar para Windows</a>` : '<span class="badge warn">Disponível na versão publicada do site</span>'}<button class="btn ghost" type="button" data-install>Instalar pelo navegador</button></div></div>
         <div class="card" ${plat === 'ios' ? 'style="border-color:var(--brand)"' : ''}><h2>${icon("smartphone")} iPhone / iPad</h2>
           <ol class="steps"><li>Abra este site no <b>Safari</b>.</li><li>Toque em <b>Compartilhar</b> (□↑).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li></ol>
           <p class="small muted">O ícone abre em tela cheia, como um app. (Publicar na App Store exige conta Apple Developer paga.)</p></div>
         <div class="card"><h2>${icon("globe")} Site</h2><p>Acesse de qualquer navegador:</p><p><code>${esc(location.origin + location.pathname)}</code></p>
-          <div class="btn-row"><button class="btn ghost" type="button" id="copyUrl">Copiar link</button>${rel ? `<a class="btn ghost" href="${rel}" target="_blank" rel="noopener">Todas as versões ↗</a>` : ''}</div></div>
+          <div class="btn-row"><button class="btn ghost" type="button" id="copyUrl">Copiar link</button></div></div>
       </div>`;
     main.addEventListener('click', async e => {
       if (e.target.closest('[data-install]')) {
@@ -1099,6 +1100,7 @@
       <div class="page-head"><h1>Sobre o FitoTech - UFAM</h1></div>
       <div class="card stack">
         <p>Protótipo de aplicativo para profissionais de saúde (médicos, enfermeiros, farmacêuticos, nutricionistas) com acesso rápido e fundamentado a posologia, contraindicações e interações das 28 espécies do <b>Memento Fitoterápico da Farmacopeia Brasileira</b>.</p>
+        <div class="qr-share"><img src="assets/img/qrcode.png" width="180" height="180" alt="QR code para acessar o FitoTech - UFAM: ig0rscruz.github.io/fitotech-ufam"><div><h2>Acesse e compartilhe</h2><p class="small">Aponte a câmera do celular para o QR code para abrir o FitoTech - UFAM.</p><p class="small"><b>ig0rscruz.github.io/fitotech-ufam</b></p></div></div>
         <h2>Referências</h2>
         <ul><li>BRASIL. Agência Nacional de Vigilância Sanitária. <i>Memento Fitoterápico da Farmacopeia Brasileira</i>. 1. ed. Brasília: Anvisa, 2016 (RDC nº 84/2016).</li>
           <li>BRASIL. Anvisa. <i>Formulário de Fitoterápicos da Farmacopeia Brasileira</i> (medidas caseiras de referência).</li>
@@ -1106,7 +1108,7 @@
           <li>OMS — classificação do IMC; Lipschitz (1994) — IMC em idosos.</li></ul>
         <h2>Fotos</h2><p class="small">Wikimedia Commons (licenças livres; o link de cada foto aparece na ficha) e anotações da equipe.</p>
         <div class="institution-signature"><img src="assets/institutional/ufam.png" width="52" height="68" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto Acadêmico da Disciplina de Fitoterapia da Faculdade de Ciências Farmacêuticas</small></span></div>
-        <h2>Equipe</h2><ul class="small"><li>Ana Beatriz Costa Prado</li><li>Emanuelly Victoria Litaiff Cauper Nonato</li><li>Igor Santana Cruz</li><li>Lorrana Tomas da Rocha Santos</li><li>Lousianne Kelly Silva Santos</li><li>Luiz Henrique Souza da Silva</li><li>Pedro Henrique Anveres Pedreira</li></ul>
+        <h2>Equipe</h2><ul class="small"><li>Ana Beatriz Costa Prado</li><li>Emanuelly Victoria Litaiff Cauper Nonato</li><li>Igor Santana Cruz</li><li>Lorranna Tomas da Rocha</li><li>Lousianne Kelly Silva Santos</li><li>Luiz Henrique Silva</li><li>Pedro Henrique Anveres Pedreira</li></ul>
         <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Nova identidade visual: personagens 3D, logo renovada, ícones e navegação lateral. A v.0 foi a primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
         <h2>Privacidade</h2><p class="small">Nenhum dado é enviado a servidores. Atendimentos e contatos ficam somente no armazenamento local do aparelho.</p>
         <div class="callout warn small">Ferramenta educacional e de apoio à decisão. Não substitui o julgamento clínico, a monografia oficial ou a bula do produto.</div>
