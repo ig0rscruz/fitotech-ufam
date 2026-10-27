@@ -81,8 +81,8 @@ jobs:
         with: { path: out, merge-multiple: true }
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: FitoTech - UFAM v1.0.${{ github.run_number }}
+          tag_name: v0.0.${{ github.run_number }}
+          name: FitoTech - UFAM v.0 (build ${{ github.run_number }})
           make_latest: true
           body: |
             - **Android:** baixe `FitoTech.apk` e permita instalar apps de fontes desconhecidas.

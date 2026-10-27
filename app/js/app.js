@@ -1,6 +1,8 @@
 /* FitoTech - UFAM — lógica do aplicativo (sem dependências externas). */
 (() => {
   'use strict';
+  // versão exibida no app — altere aqui ao publicar uma nova versão
+  const APP_VERSION = 'v.0';
   const PLANTAS = (window.PLANTAS || []).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   const byId = Object.fromEntries(PLANTAS.map(p => [p.id, p]));
   let main = document.getElementById('main');
@@ -159,6 +161,7 @@
     main.focus({ preventScroll: true });
   }
   window.addEventListener('hashchange', go);
+  document.querySelector('.brand small').textContent = `UFAM · Memento Fitoterápico · ${APP_VERSION}`;
   const setTitle = t => { document.title = t ? t + ' · FitoTech - UFAM' : 'FitoTech - UFAM'; };
 
   // ---------- ESCOLHA DE PERFIL ----------
@@ -189,6 +192,7 @@
         </div>
         <div class="callout warn sec small"><b>Por que perguntamos?</b> A indicação de dose, a prescrição e a manipulação de fitoterápicos devem ser feitas por profissionais habilitados. Preparar ou usar plantas por conta própria, em doses ou formas inadequadas, pode causar intoxicação, interações perigosas com medicamentos e outros danos à saúde.</div>
         <p class="center small sec"><a href="#/emergencia">☎ Emergência / intoxicação</a></p>
+        <p class="center small muted">FitoTech - UFAM · versão ${APP_VERSION}</p>
       </section>`;
     const decl = main.querySelector('#decl'), goPro = main.querySelector('#goPro');
     decl.addEventListener('change', () => { goPro.disabled = !decl.checked; });
@@ -265,7 +269,7 @@
         <span><strong>Suspeita de intoxicação?</strong> Ligue para o Disque-Intoxicação (Anvisa) ou SAMU.</span>
         <span class="btn-row"><a class="btn danger small" href="tel:08007226001">0800 722 6001</a><a class="btn danger small" href="tel:192">SAMU 192</a></span>
       </div>
-      <p class="disclaimer">Ferramenta de apoio ao profissional de saúde. Não substitui a avaliação clínica nem a consulta ao Memento Fitoterápico (Anvisa, 2016). Conteúdo das monografias reproduzido da fonte oficial.</p>`;
+      <p class="disclaimer">Ferramenta de apoio ao profissional de saúde. Não substitui a avaliação clínica nem a consulta ao Memento Fitoterápico (Anvisa, 2016). Conteúdo das monografias reproduzido da fonte oficial.<br><b>FitoTech - UFAM · versão ${APP_VERSION}</b></p>`;
     main.querySelector('#homeSearch').addEventListener('submit', e => { e.preventDefault(); location.hash = '#/plantas?q=' + encodeURIComponent(e.target.q.value); });
   };
 
@@ -1060,6 +1064,7 @@
           <li>OMS — classificação do IMC; Lipschitz (1994) — IMC em idosos.</li></ul>
         <h2>Fotos</h2><p class="small">Wikimedia Commons (licenças livres; o link de cada foto aparece na ficha) e anotações da equipe.</p>
         <h2>Equipe</h2><p class="small">Igor Santana, Ana Beatriz, Lorrana Rocha, Pedro Anveres, Luiz Henrique, Lousianne Kelly e Emanuelly.</p>
+        <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
         <h2>Privacidade</h2><p class="small">Nenhum dado é enviado a servidores. Atendimentos e contatos ficam somente no armazenamento local do aparelho.</p>
         <div class="callout warn small">Ferramenta educacional e de apoio à decisão. Não substitui o julgamento clínico, a monografia oficial ou a bula do produto.</div>
         <div class="btn-row"><button class="btn ghost small" type="button" id="clearAll">Apagar dados salvos neste aparelho</button></div>
