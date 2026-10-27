@@ -4,6 +4,12 @@
 
 Protótipo de aplicativo para profissionais de saúde com as **28 espécies do Memento Fitoterápico da Farmacopeia Brasileira (Anvisa, 2016)**. É um site instalável (PWA) publicado no GitHub Pages, com versões para **Android (APK)**, **Windows (.exe)** e **iPhone** (atalho na tela inicial). Todas as versões abrem o mesmo site online, então uma atualização no site chega a todos os apps.
 
+## Acesso
+
+- **Site:** https://ig0rscruz.github.io/fitotech-ufam/
+- **Android (APK) e Windows (.exe):** https://github.com/ig0rscruz/fitotech-ufam/releases/latest
+- **iPhone:** abrir o site no Safari → Compartilhar → Adicionar à Tela de Início
+
 ## Perfis de uso: paciente × profissional
 
 Na primeira abertura o app pergunta **quem está usando**:

@@ -6,7 +6,7 @@ name: Gerar apps (Android + Windows)
 on:
   push:
     branches: [main]
-    paths: ['desktop/**', 'mobile/**', '.github/workflows/apps.yml']
+    paths: ['app/**', 'desktop/**', 'mobile/**', '.github/workflows/apps.yml']
   workflow_dispatch:
 
 permissions:
