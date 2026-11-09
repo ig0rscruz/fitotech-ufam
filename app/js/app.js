@@ -2,8 +2,16 @@
 (() => {
   'use strict';
   // versão exibida no app — altere aqui ao publicar uma nova versão
-  const APP_VERSION = 'v.1';
-  const PLANTAS = (window.PLANTAS || []).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const APP_VERSION = 'v.2';
+  // Bases: Memento Fitoterápico (data.js) + Formulário de Fitoterápicos, 3ª ed. (formulario.js)
+  const FF = window.FORMULARIO || { monografias: [], especies: [], calcExtra: {} };
+  const FFMONO = {};
+  FF.monografias.forEach(m => (FFMONO[m.especie] = FFMONO[m.especie] || []).push(m));
+  const PLANTAS = [...(window.PLANTAS || []).map(p => Object.assign(p, { fonte: 'memento' })), ...FF.especies]
+    .map(p => { p.ffMonos = FFMONO[p.id] || []; if (FF.calcExtra[p.id]) p.calc = [...p.calc, ...FF.calcExtra[p.id]]; return p; })
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const N_ESP = PLANTAS.length, N_MEM = PLANTAS.filter(p => p.fonte === 'memento').length, N_FF = PLANTAS.filter(p => p.ffMonos.length).length;
+  const isFF = p => p.fonte === 'ff';
   const byId = Object.fromEntries(PLANTAS.map(p => [p.id, p]));
   let main = document.getElementById('main');
 
@@ -45,7 +53,10 @@
   const foto = p => (p.fotos[0] || {}).src || 'assets/icons/icon-192.png';
   // capa ilustrada: assets/img/capas/<id>.jpg (se não existir, usa a foto real)
   const capaSrc = p => `assets/img/capas/${p.id}.jpg`;
-  const capaImg = (p, attrs = '') => `<img ${attrs} src="${capaSrc(p)}" data-fb="${foto(p)}" onerror="this.onerror=null;this.src=this.dataset.fb" alt="Ilustração de ${esc(p.nome)}">`;
+  const capaImg = (p, attrs = '') => isFF(p) ? `<img ${attrs} src="${foto(p)}" alt="Foto de ${esc(p.nome)}">`
+    : `<img ${attrs} src="${capaSrc(p)}" data-fb="${foto(p)}" onerror="this.onerror=null;this.src=this.dataset.fb" alt="Ilustração de ${esc(p.nome)}">`;
+  const fonteBadges = p => (p.fonte === 'memento' ? '<span class="badge ok" title="Memento Fitoterápico (Anvisa, 2016)">Memento</span>' : '')
+    + (p.ffMonos.length ? '<span class="badge info" title="Formulário de Fitoterápicos, 3ª ed. (Anvisa, 2026)">Formulário</span>' : '');
 
   // ---------- perfil de uso: paciente × profissional ----------
   const perfil = () => store.get('perfil', '');
@@ -94,12 +105,12 @@
   const IDX = PLANTAS.map(p => ({
     p,
     f: [
-      ['nome', 100, norm([p.nome, ...p.populares].join(' | '))],
-      ['nome científico', 90, norm(p.cientificoCompleto + ' ' + p.sinonimia)],
+      ['nome', 100, norm([p.nome, ...p.populares, ...p.ffMonos.flatMap(m => m.populares)].join(' | '))],
+      ['nome científico', 90, norm([p.cientificoCompleto, p.sinonimia, ...p.ffMonos.map(m => m.cientifico + ' ' + (m.sinonimia || ''))].join(' '))],
       ['sintoma/queixa', 70, norm(p.tags.join(' | '))],
-      ['indicação', 50, norm(p.memento.indicacoes)],
+      ['indicação', 50, norm([p.memento.indicacoes, ...p.ffMonos.map(m => m.indicacoes)].join(' '))],
       ['característica', 25, norm([p.familia, p.parte, p.porte, 'flor ' + p.flor, p.via].join(' | '))],
-      ['outras seções', 4, norm([p.memento.formas, p.memento.posologia, p.memento.contraindicacoes, p.memento.interacoes, p.memento.precaucoes].join(' '))]
+      ['outras seções', 4, norm([p.memento.formas, p.memento.posologia, p.memento.contraindicacoes, p.memento.interacoes, p.memento.precaucoes, ...p.ffMonos.map(m => m.advertencias + ' ' + m.modo)].join(' '))]
     ]
   }));
   function expand(q) {
@@ -151,7 +162,7 @@
   // ---------- alertas resumidos ----------
   function alertBadges(p, max = 6) {
     const r = p.riscos, b = [];
-    b.push(p.rx ? '<span class="badge warn" title="Venda sob prescrição médica">℞ Prescrição</span>' : '<span class="badge info" title="Isento de prescrição">MIP</span>');
+    if (p.rx !== null && p.rx !== undefined) b.push(p.rx ? '<span class="badge warn" title="Venda sob prescrição médica">℞ Prescrição</span>' : '<span class="badge info" title="Isento de prescrição">MIP</span>');
     if (r.gestante && r.gestante[0] === 'c') b.push('<span class="badge bad" title="Contraindicado na gestação">Gestação</span>');
     else if (r.gestante) b.push('<span class="badge warn" title="Cautela na gestação">Cautela</span>');
     if (r.m_anticoag || r.coagulopatia) b.push(`<span class="badge ${(r.m_anticoag || r.coagulopatia)[0] === 'c' ? 'bad' : 'warn'}" title="Risco de sangramento / anticoagulantes">Sangramento</span>`);
@@ -188,7 +199,7 @@
     main.focus({ preventScroll: true });
   }
   window.addEventListener('hashchange', go);
-  document.querySelector('.brand small').textContent = `UFAM · Memento Fitoterápico · ${APP_VERSION}`;
+  document.querySelector('.brand small').textContent = `UFAM · Memento e Formulário · ${APP_VERSION}`;
   const setTitle = t => { document.title = t ? t + ' · FitoTech - UFAM' : 'FitoTech - UFAM'; };
 
   // ---------- ESCOLHA DE PERFIL ----------
@@ -199,7 +210,7 @@
       <section class="gate">
         <div class="gate-welcome"><div>        <div class="gate-brand"><img class="gate-logo" src="assets/icons/icon-192.png" alt="Logo FitoTech - UFAM" width="80" height="80"><span class="eyebrow">CIÊNCIA · NATUREZA · TECNOLOGIA</span></div>
         <h1>O conhecimento floresce aqui.</h1>
-        <p class="muted">Cartilha Digital de Fitoterapia baseada no Memento Fitoterápico da Farmacopeia Brasileira (Anvisa).</p>
+        <p class="muted">Cartilha Digital de Fitoterapia baseada no Memento Fitoterápico e no Formulário de Fitoterápicos da Farmacopeia Brasileira (Anvisa).</p>
 </div><img class="gate-people" src="assets/illustrations/orientacao-farmaceutica.webp" alt="Farmacêutico orienta uma paciente, em bonecos 3D de vinil."></div>
         <h2 class="sec">Como você vai usar o aplicativo?</h2>
         <div class="grid grid-2 sec">
@@ -272,11 +283,11 @@
       <section class="hero dashboard-hero">
         <div class="hero-copy"><span class="hero-label">${icon('leaf')} NATUREZA COM FUNDAMENTO</span>
           <h2>Ciência que aproxima.<br><em>Cuidado que acolhe.</em></h2>
-          <p>Explore as 28 espécies do Memento Fitoterápico. Conhecimento científico para um cuidado mais consciente.</p>
+          <p>Explore ${N_ESP} espécies do Memento Fitoterápico e do Formulário de Fitoterápicos. Conhecimento científico para um cuidado mais consciente.</p>
           <form class="searchbox" id="homeSearch" role="search">${icon('search')}
             <input type="search" name="q" placeholder="Busque uma planta ou sintoma…" aria-label="Buscar planta" autocomplete="off"><button type="submit" aria-label="Pesquisar">${icon('arrow')}</button>
           </form>
-          <div class="hero-source">${icon('book')} Memento Fitoterápico · Anvisa, 2016</div>
+          <div class="hero-source">${icon('book')} Memento Fitoterápico (2016) · Formulário de Fitoterápicos (2026) · Anvisa</div>
         </div>
         <div class="hero-art people-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><img src="assets/illustrations/orientacao-farmaceutica.webp" alt="Farmacêutico e paciente conversam sobre plantas medicinais, em ilustração 3D acolhedora."><span class="people-caption">${icon('heart')} Conhecimento que cuida de pessoas</span></div>
       </section>
@@ -286,13 +297,13 @@
       <div class="grid grid-3">
         ${(isPro() ? [
           ['#/atendimento', '✚', 'Atendimento clínico', 'Sinais vitais, comorbidades e medicamentos → triagem de segurança e receituário.'],
-          ['#/plantas', '❦', 'As 28 espécies', 'Fichas completas: indicação, preparo, posologia, contraindicações e interações.'],
+          ['#/plantas', '❦', `As ${N_ESP} espécies`, 'Memento e Formulário: indicação, fórmulas, preparo, posologia, contraindicações e interações.'],
           ['#/calculadora', '⚖', 'Calculadora de preparo', 'Quantidade de planta seca/fresca por volume de água, tinturas e doses.'],
           ['#/identificar', '◉', 'Identificador visual', 'Fotos com o que faz bem (✔) e o que faz mal (✖) em cada planta.'],
           ['#/glossario', 'Aa', 'Glossário técnico', 'Infusão, decocção, maceração, tintura e outros termos.'],
           ['#/emergencia', '☎', 'Emergência e intoxicação', 'SAMU 192, Disque-Intoxicação 0800 722 6001 e outros.']
         ] : [
-          ['#/plantas', '❦', 'As 28 plantas', 'Para que servem, quando não usar e quais remédios podem interagir.'],
+          ['#/plantas', '❦', `As ${N_ESP} plantas`, 'Para que servem, quando não usar e quais remédios podem interagir.'],
           ['#/cuidados', '♥', 'Cuidados importantes', 'Natural não é inofensivo: o que fazer e o que evitar.'],
           ['#/identificar', '◉', 'Identificar planta', 'Compare fotos e veja a parte que faz bem (✔) e a que faz mal (✖).'],
           ['#/glossario', 'Aa', 'Glossário', 'O que é infusão, decocção, tintura…'],
@@ -306,21 +317,22 @@
         <span><strong>Suspeita de intoxicação?</strong> Ligue para o Disque-Intoxicação (Anvisa) ou SAMU.</span>
         <span class="btn-row"><a class="btn danger small" href="tel:08007226001">0800 722 6001</a><a class="btn danger small" href="tel:192">SAMU 192</a></span>
       </div>
-      <p class="disclaimer">Ferramenta de apoio ao profissional de saúde. Não substitui a avaliação clínica nem a consulta ao Memento Fitoterápico (Anvisa, 2016). Conteúdo das monografias reproduzido da fonte oficial.<br><b>FitoTech - UFAM · versão ${APP_VERSION}</b></p>`;
+      <p class="disclaimer">Ferramenta de apoio ao profissional de saúde. Não substitui a avaliação clínica nem a consulta ao Memento Fitoterápico (Anvisa, 2016) e ao Formulário de Fitoterápicos (Anvisa, 2026). Conteúdo das monografias reproduzido da fonte oficial.<br><b>FitoTech - UFAM · versão ${APP_VERSION}</b></p>`;
     main.querySelector('#homeSearch').addEventListener('submit', e => { e.preventDefault(); location.hash = '#/plantas?q=' + encodeURIComponent(e.target.q.value); });
   };
 
   // ---------- LISTA / BUSCA ----------
   const FILTERS = {
+    mem: ['Memento', p => p.fonte === 'memento'], ff: ['Formulário', p => p.ffMonos.length > 0],
     oral: ['Uso oral', p => /Oral/.test(p.via)], topico: ['Uso externo', p => /T[óo]pica|externo/i.test(p.via)],
-    mip: ['Isento de prescrição', p => !p.rx], rx: ['Sob prescrição', p => p.rx],
+    mip: ['Isento de prescrição', p => p.rx === false], rx: ['Sob prescrição', p => p.rx === true],
     gest: ['Sem contraindicação na gestação', p => !p.riscos.gestante], chas: ['Tem preparo caseiro (chá)', p => p.populacao.length > 0]
   };
   routes.plantas = (r) => {
     setTitle('Espécies');
     const q0 = r.q.get('q') || '';
     main.innerHTML = `
-      <div class="page-head"><h1>Espécies do Memento</h1><p>Busque por nome popular, científico, sintoma/queixa ou característica (ex.: "flor amarela", "raiz", "árvore").</p></div>
+      <div class="page-head"><h1>Espécies</h1><p>${N_ESP} espécies: ${N_MEM} do Memento Fitoterápico e ${N_FF} do Formulário de Fitoterápicos (algumas estão nos dois). Busque por nome popular, científico, sintoma/queixa ou característica (ex.: "flor amarela", "raiz", "árvore").</p></div>
       <form class="searchbox" role="search" onsubmit="return false"><input id="q" type="search" value="${esc(q0)}" placeholder="Ex.: ansiedade, Matricaria, boldo, tosse…" aria-label="Buscar" autocomplete="off"></form>
       <div class="list-tools chips" id="filters">${Object.entries(FILTERS).filter(([k]) => isPro() || k !== 'chas').map(([k, [l]]) => `<button class="chip" type="button" data-f="${k}" aria-pressed="false">${l}</button>`).join('')}</div>
       <p class="muted small" id="count" aria-live="polite"></p>
@@ -340,7 +352,7 @@
             <div class="sci">${highlight(p.cientifico, q)}</div>
             <div class="why">${highlight(p.memento.indicacoes.slice(0, 120), q)}${p.memento.indicacoes.length > 120 ? '…' : ''}</div>
             ${why && why !== 'nome' ? `<div class="small muted">Encontrado em: ${esc(why)}</div>` : ''}
-            <div class="badges">${alertBadges(p, 4)}</div>
+            <div class="badges">${fonteBadges(p)}${alertBadges(p, 3)}</div>
           </div>
         </a>`).join('') : `<div class="empty card">Nada encontrado. Tente outro termo (ex.: "digestão", "sono", "pele").</div>`;
     };
@@ -360,6 +372,26 @@
     ['posologia', 'Via de administração e posologia'], ['tempo', 'Tempo de utilização'], ['superdosagem', 'Superdosagem'],
     ['prescricao', 'Prescrição'], ['quimica', 'Principais classes químicas']
   ];
+  const SECTIONS_FF = [
+    ['indicacoes', 'Indicações (Formulário de Fitoterápicos)'], ['contraindicacoes', 'Advertências: contraindicações, precauções e interações'],
+    ['posologia', 'Modo de usar'], ['formas', 'Formas farmacêuticas'], ['prescricao', 'Origem da formulação']
+  ];
+  // fórmulas do Formulário de Fitoterápicos (tabela componente × quantidade)
+  function ffSection(p) {
+    if (!p.ffMonos.length) return '';
+    const full = !isFF(p);
+    return `<div class="card sec ff-sec"><h2>Formulário de Fitoterápicos <span class="badge info">FFFB 3ª ed., 2026</span></h2>
+      <p class="small muted">${p.ffMonos.length > 1 ? p.ffMonos.length + ' monografias' : 'Monografia'} com fórmulas para manipulação e farmácias vivas.</p>
+      ${p.ffMonos.map(m => `<details class="sec" ${p.ffMonos.length === 1 ? 'open' : ''}><summary>${esc(m.codigo)} · ${esc(m.cientifico)}</summary><div class="in">
+        ${m.grupos.map(g => g.formulas.map(f => `<div class="ff-formula"><h3>${esc(g.forma)} — Fórmula ${f.n}</h3>
+          <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Quantidade</th></tr></thead><tbody>${f.itens.map(([c, q]) => `<tr><td>${esc(c)}</td><td>${esc(q)}</td></tr>`).join('')}</tbody></table></div>
+          ${f.ref ? `<p class="small muted">Referência: ${esc(f.ref)}</p>` : ''}</div>`).join('')).join('')}
+        ${m.preparo ? `<h3>Orientações para o preparo</h3><p>${esc(m.preparo)}</p>` : ''}
+        ${m.modo ? `<h3>Modo de usar</h3><p>${esc(m.modo)}</p>` : ''}
+        ${full && m.indicacoes ? `<h3>Indicações</h3><p>${esc(m.indicacoes)}</p>` : ''}
+        ${full && m.advertencias ? `<h3>Advertências</h3><p>${esc(m.advertencias)}</p>` : ''}
+      </div></details>`).join('')}</div>`;
+  }
   routes.planta = (r) => {
     const p = byId[r.arg];
     if (!p) { main.innerHTML = '<div class="empty card">Espécie não encontrada. <a href="#/plantas">Ver todas</a></div>'; return; }
@@ -369,15 +401,15 @@
     const partsOk = p.partes.filter(x => x.ok), partsNo = p.partes.filter(x => !x.ok);
     const pro = isPro();
     // slide 0 = capa ilustrada; demais = fotos reais (a 1ª foto real fica desfocada ao fundo da capa)
-    let slides = [{ src: capaSrc(p), capa: true, credito: 'Ilustração — equipe FitoTech - UFAM', link: '', obs: '' }, ...p.fotos];
+    let slides = isFF(p) ? [...p.fotos] : [{ src: capaSrc(p), capa: true, credito: 'Ilustração — equipe FitoTech - UFAM', link: '', obs: '' }, ...p.fotos];
     const SEC_PAC = ['indicacoes', 'contraindicacoes', 'precaucoes', 'interacoes', 'adversos', 'superdosagem'];
-    const secoes = pro ? SECTIONS : SECTIONS.filter(([k]) => SEC_PAC.includes(k));
+    const secoes = (isFF(p) ? SECTIONS_FF : SECTIONS).filter(([k]) => (pro || SEC_PAC.includes(k)) && p.memento[k]);
     main.innerHTML = `
       <p><a href="#/plantas">← ${pro ? 'Espécies' : 'Plantas'}</a></p>
       ${pharmacistCard(contra.length ? 'attention' : 'welcome', contra.length ? 'Esta espécie tem contraindicações. Vamos olhar com atenção.' : 'Conhecer a planta é só o começo do cuidado.', 'O farmacêutico ajuda a interpretar as informações da espécie e relacioná-las ao histórico e aos medicamentos em uso. Consulte os alertas da ficha abaixo.')}
       <div class="ficha-top">
         <div class="gallery">
-          <div class="main"><div class="gbg" id="gbg" style="background-image:url('${foto(p)}')"></div><img id="gimg" src="${capaSrc(p)}" alt="${esc(p.nome)}">
+          <div class="main"><div class="gbg" id="gbg" style="background-image:url('${foto(p)}')"></div><img id="gimg" src="${slides[0] ? slides[0].src : foto(p)}" alt="${esc(p.nome)}">
             <div class="overlay-tags">${partsOk.map(x => `<span class="ok">${esc(x.parte)}</span>`).join('')}${partsNo.slice(0, 2).map(x => `<span class="no">${esc(x.parte)}</span>`).join('')}</div>
           </div>
           <div class="thumbs" role="list">${slides.map((f, i) => `<button type="button" data-i="${i}" aria-current="${i === 0}" aria-label="${f.capa ? 'Ilustração' : 'Foto ' + i}"><img loading="lazy" src="${f.src}" alt=""></button>`).join('')}</div>
@@ -386,7 +418,7 @@
         <div>
           <h1>${esc(p.nome)}</h1>
           <div class="sci" style="font-size:1.05rem">${esc(p.cientificoCompleto)}</div>
-          <div class="badges" style="margin:10px 0">${alertBadges(p, 9)}</div>
+          <div class="badges" style="margin:10px 0">${fonteBadges(p)}${alertBadges(p, 9)}</div>
           <dl class="kv">
             <dt>Nomes populares</dt><dd>${esc(p.populares.join(', '))}</dd>
             <dt>Família</dt><dd>${esc(p.familia)}</dd>
@@ -394,7 +426,7 @@
             <dt>Parte utilizada</dt><dd>${esc(p.parte)}</dd>
             <dt>Via</dt><dd>${esc(p.via)}</dd>
             <dt>Tempo máximo</dt><dd>${esc(p.tempoMax)}</dd>
-            <dt>Prescrição</dt><dd>${p.rx ? 'Somente sob prescrição médica' : 'Isento de prescrição médica'}</dd>
+            <dt>Prescrição</dt><dd>${p.rx === null || p.rx === undefined ? 'Preparação do Formulário (manipulação / farmácia viva)' : p.rx ? 'Somente sob prescrição médica' : 'Isento de prescrição médica'}</dd>
           </dl>
           ${pro ? `<div class="btn-row" style="margin-top:12px">
             ${p.calc.length ? `<a class="btn" href="#/calculadora?p=${p.id}">⚖ Calcular preparo</a>` : ''}
@@ -420,14 +452,15 @@
           <button role="tab" aria-selected="true" data-t="pop">Para a população</button>
           <button role="tab" aria-selected="false" data-t="mag">Uso clínico / manipulação</button>
         </div>
-        <div data-p="pop">${p.populacao.length ? `<ol class="steps">${p.populacao.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : `<div class="callout warn">Não há preparo caseiro previsto no Memento para esta espécie. Orientar o uso apenas de <b>produto industrializado ou manipulado</b>, conforme a posologia clínica.</div>`}
+        <div data-p="pop">${p.populacao.length ? `<ol class="steps">${p.populacao.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : `<div class="callout warn">Não há preparo caseiro previsto na monografia desta espécie. Orientar o uso apenas de <b>produto industrializado ou manipulado</b>, conforme a posologia clínica.</div>`}
           <p class="small muted" style="margin-top:8px">Medidas caseiras: 1 xícara de chá = 150 mL · 1 colher de sopa = 15 mL · 1 colher de chá = 5 mL.</p></div>
         <div data-p="mag" hidden><ul>${p.magistral.map(s => `<li>${esc(s)}</li>`).join('')}</ul>
           <p class="small muted">Via: ${esc(p.via)} · Tempo máximo: ${esc(p.tempoMax)}</p></div>
       </div>` : ''}
 
       ${secoes.map(([k, t], i) => `<details class="sec" ${i < 4 ? 'open' : ''}><summary>${t}</summary><div class="in"><p>${esc(p.memento[k])}</p>${k === 'superdosagem' ? '<p><a class="btn danger small" href="tel:08007226001">☎ Disque-Intoxicação 0800 722 6001</a> <a class="btn danger small" href="tel:192">SAMU 192</a></p>' : ''}</div></details>`).join('')}
-      <p class="disclaimer">Fonte: Memento Fitoterápico da Farmacopeia Brasileira, 1ª ed. (Anvisa, 2016). Classificação de alertas: curadoria da equipe a partir da monografia.</p>`;
+      ${pro ? ffSection(p) : ''}
+      <p class="disclaimer">Fonte: ${[p.fonte === 'memento' ? 'Memento Fitoterápico da Farmacopeia Brasileira, 1ª ed. (Anvisa, 2016)' : '', p.ffMonos.length ? 'Formulário de Fitoterápicos da Farmacopeia Brasileira, 3ª ed. (Anvisa, 2026)' : ''].filter(Boolean).join('; ')}. Classificação de alertas: ${isFF(p) ? 'extraída das advertências do Formulário — conferir sempre com a monografia' : 'curadoria da equipe a partir da monografia'}.</p>`;
     const gimg = main.querySelector('#gimg'), gal = main.querySelector('.gallery .main');
     let cur = 0;
     const setPhoto = i => {
@@ -606,7 +639,7 @@
         <h2>Resultado da triagem ${q && !showAll ? `para "${esc(q)}"` : '(todas as espécies)'}</h2>
         <p class="small muted">Fatores considerados: ${ativos.length ? ativos.map(k => esc(COND[k] || k)).join(', ') : 'nenhum marcado'}${st.pac.idade ? ` · idade ${esc(st.pac.idade)} anos` : ''}.</p>
         <div class="badges sec"><span class="badge ok">✔ ${n('ok')} compatível(is)</span><span class="badge warn">⚠ ${n('warn')} com atenção</span><span class="badge bad">⛔ ${n('bad')} contraindicada(s)</span></div>
-        ${q && !lista.length ? `<div class="callout warn sec">Nenhuma espécie do Memento tem indicação para "${esc(q)}". Mostrando a triagem de segurança de todas.</div>` : ''}
+        ${q && !lista.length ? `<div class="callout warn sec">Nenhuma espécie do app tem indicação para "${esc(q)}". Mostrando a triagem de segurança de todas.</div>` : ''}
         ${q && n('ok') === 0 && lista.length && !showAll ? `<div class="callout bad sec"><strong class="t">Nenhuma opção segura para este paciente.</strong>Considere medidas não farmacológicas, outra abordagem terapêutica ou encaminhamento.</div>` : ''}
         <div class="sec">${avals.map(({ p, status, motivos }) => `
           <div class="result ${status}">
@@ -643,7 +676,7 @@
               <div class="field"><label>Duração</label><input type="text" data-k="duracao" value="${esc(it.duracao)}"></div>
               <div class="field"><label>Via</label><input type="text" data-k="via" value="${esc(it.via)}"></div>
             </div>
-            <p class="small muted" style="margin-top:6px">Tempo máximo (Memento): ${esc(p.tempoMax)}</p>
+            <p class="small muted" style="margin-top:6px">Tempo máximo: ${esc(p.tempoMax)}</p>
             ${a.motivos.length ? `<div class="callout warn small">${a.motivos.map(m => esc(m[1])).join('<br>')}</div>` : ''}
           </div>`; }).join('')}
         <div class="btn-row sec"><button class="btn" type="button" id="btnPrint">🖨 Imprimir / salvar PDF</button><button class="btn ghost" type="button" id="share">↗ Compartilhar texto</button></div>`;
@@ -666,7 +699,7 @@
         ${st.rx.map((it, i) => { const p = byId[it.id]; return `<div class="rx-item"><b>${i + 1}. ${esc(p.nome)}</b> (<i>${esc(p.cientifico)}</i>) — ${esc(p.parte)}<br>${esc(it.forma)}<br>${esc(it.posologia)}<br>Duração: ${esc(it.duracao)}</div>`; }).join('')}
         <div class="rx-alert"><b>Orientações:</b> não exceder a dose; suspender e procurar o serviço de saúde em caso de reação adversa; informar o uso de fitoterápicos em consultas e antes de cirurgias. Intoxicação: Disque-Intoxicação 0800 722 6001 · SAMU 192.</div>
         <div class="rx-sign"><div>${esc(prof.nome || 'Assinatura e carimbo')}<br>${esc(prof.registro || '')}</div></div>
-        <div class="rx-foot">Gerado pelo FitoTech - UFAM com base no Memento Fitoterápico da Farmacopeia Brasileira (Anvisa, 2016).</div>`;
+        <div class="rx-foot">Gerado pelo FitoTech - UFAM com base no Memento Fitoterápico (Anvisa, 2016) e no Formulário de Fitoterápicos (Anvisa, 2026) da Farmacopeia Brasileira.</div>`;
       window.print();
     };
 
@@ -703,6 +736,7 @@
   // ---------- CALCULADORA ----------
   const PREP = {
     infusao: ['Ferva a água e desligue o fogo.', 'Despeje a água sobre a planta (ou coloque a planta na água recém-fervida).', 'Tampe e deixe em repouso por 5 a 15 minutos (abafado).', 'Coe e use em seguida. Não reaproveite a planta; descarte o chá após 24 h.'],
+    maceracao: ['Coloque a planta rasurada em água à temperatura ambiente (ou na água indicada na fórmula).', 'Deixe em repouso pelo tempo indicado (ex.: 8 horas), mexendo de vez em quando.', 'Esprema o material vegetal, coe e use o líquido. Consumir no mesmo dia.'],
     decoccao: ['Coloque a planta (raízes, cascas, partes duras) na água fria.', 'Leve ao fogo e ferva em fogo baixo por 10 a 20 minutos, com a panela tampada.', 'Desligue, deixe repousar 10–15 min e coe.', 'Complete com água até o volume inicial, se necessário. Usar em até 24 h.'],
     tintura: ['Meça a tintura com seringa dosadora ou copo graduado.', 'Dilua no volume de água indicado.', 'Use imediatamente após a diluição.'],
     droga: ['Usar a droga vegetal pesada em balança (cápsulas manipuladas ou pó).', 'Respeitar a dose diária total e o número de tomadas.']
@@ -726,11 +760,12 @@
     const por = c.tipo === 'droga' ? 'por dia' : 'por dose';
     if (faixa && dose) {
       const [mn, mx] = faixa;
-      if (dose < mn) it.push(['warn', `<b>Dose abaixo</b> da faixa do Memento (${fmt(mn)}–${fmt(mx)} ${un} ${por}): pode não ter efeito terapêutico.`]);
-      else if (dose <= mx) it.push(['ok', `Dose dentro da faixa do Memento (${fmt(mn)}–${fmt(mx)} ${un} ${por}).`]);
+      const fonteTxt = c.fonte === 'FFFB' ? 'do Formulário' : 'do Memento';
+      if (dose < mn) it.push(['warn', `<b>Dose abaixo</b> da faixa ${fonteTxt} (${fmt(mn)}–${fmt(mx)} ${un} ${por}): pode não ter efeito terapêutico.`]);
+      else if (dose <= mx) it.push(['ok', `Dose dentro da faixa ${fonteTxt} (${fmt(mn)}–${fmt(mx)} ${un} ${por}).`]);
       else {
         const r = dose / mx;
-        it.push([r > 1.5 ? 'bad' : 'warn', `<b>Dose ${fmt((r - 1) * 100, 0)}% acima do máximo</b> (${fmt(mx)} ${un} ${por}). Risco de superdosagem — ${esc(p.memento.superdosagem)}`]);
+        it.push([r > 1.5 ? 'bad' : 'warn', `<b>Dose ${fmt((r - 1) * 100, 0)}% acima do máximo</b> (${fmt(mx)} ${un} ${por}). Risco de superdosagem — ${esc(p.memento.superdosagem || 'veja as advertências da espécie.')}`]);
       }
       if (faixa && dose && vez) it.push(['info', `Total diário: <b>${fmt(dose * vez, 2)} ${un}</b>${c.tipo === 'droga' ? '' : ` (${vez}× ${fmt(dose, 2)} ${un})`}.`]);
     }
@@ -742,7 +777,7 @@
       if (dm && dias > dm && naoEstab) it.push(['warn', `<b>${fmt(dias, 0)} dias</b> excede o período avaliado em estudo (${esc(p.tempoMax)}). Reavaliar o paciente.`]);
       else if (dm && dias > dm) it.push(['bad', `<b>${fmt(dias, 0)} dias</b> ultrapassa o tempo máximo de uso (${esc(p.tempoMax)}). ${esc(p.memento.tempo)}`]);
       else if (dm) it.push(['ok', `Duração dentro do tempo máximo (${esc(p.tempoMax)}).`]);
-      else it.push(['warn', `Tempo máximo de uso não estabelecido no Memento — reavaliar o paciente periodicamente.`]);
+      else it.push(['warn', `Tempo máximo de uso não estabelecido na monografia — reavaliar o paciente periodicamente.`]);
     }
     if (fresca) it.push(['warn', 'Planta fresca: o teor de água e de princípios ativos varia; a conversão (×3) é uma estimativa. Prefira a droga vegetal seca.']);
     const contra = Object.entries(p.riscos).filter(([, v]) => v[0] === 'c');
@@ -758,7 +793,7 @@
       pac = `<div class="callout ${lab[0]} sec small"><strong class="t">${lab[1]}${st.pac.nome ? ` (${esc(st.pac.nome)}${st.pac.idade ? ', ' + esc(st.pac.idade) + ' anos' : ''})` : ''}</strong>${a.motivos.map(m => esc(m[1])).join('<br>')}</div>`;
     }
     const nivel = it.some(x => x[0] === 'bad') ? 'bad' : it.some(x => x[0] === 'warn') ? 'warn' : 'ok';
-    const titulo = { ok: '✔ Dose e duração dentro dos parâmetros do Memento', warn: '⚠ Atenção à dose ou ao uso', bad: '⛔ Risco elevado — revise a prescrição' }[nivel];
+    const titulo = { ok: '✔ Dose e duração dentro dos parâmetros da monografia', warn: '⚠ Atenção à dose ou ao uso', bad: '⛔ Risco elevado — revise a prescrição' }[nivel];
     const ico = { ok: '✔', warn: '⚠', bad: '⛔', info: 'ℹ' };
     return `
       <div class="risk sec">
@@ -862,7 +897,7 @@
           <p>Tratamento (${fmt(dias, 0)} dias): <b>${fmt(dose * dias, 1)} g</b> de droga vegetal.</p>`;
       } else {
         const dose = val('cdose'), ml = val('cml') || c.ml, fresca = cin.querySelector('#cfresca')?.checked;
-        if (!dose) { cout.innerHTML = html + `<div class="callout warn">${c.g ? 'Informe a dose.' : 'O Memento não fixa a massa de planta para este preparo. Informe a quantidade conforme o Formulário Fitoterápico da Farmacopeia Brasileira ou orientação do prescritor.'}</div>`; return; }
+        if (!dose) { cout.innerHTML = html + `<div class="callout warn">${c.g ? 'Informe a dose.' : 'A monografia não fixa a massa de planta para este preparo. Informe a quantidade conforme o Formulário Fitoterápico da Farmacopeia Brasileira ou orientação do prescritor.'}</div>`; return; }
         const m = dose * (fresca ? 3 : 1);
         html += `<p>Em cada dose:</p><p class="big">${fmt(m, 2)} g</p>
           <p>de planta ${fresca ? '<b>fresca</b>' : 'seca'} (≈ ${fmt(m / CH, 1)} colher(es) de chá ou ${fmt(m / SOPA, 1)} de sopa) em <b>${fmt(ml, 0)} mL</b> de água.</p>
@@ -872,7 +907,7 @@
         if (c.mlObs) html += `<p class="small muted">${esc(c.mlObs)}</p>`;
       }
       html += riscoDose(p, c, { dose: val('cdose'), vez: c.tipo === 'droga' ? 1 : vez, dias, fresca: !!cin.querySelector('#cfresca')?.checked });
-      html += `<h3 class="sec">Modo de preparo —${c.tipo === 'infusao' ? 'infusão' : c.tipo === 'decoccao' ? 'decocção' : c.tipo === 'tintura' ? 'diluição da tintura' : 'droga vegetal'}</h3><ol class="steps">${PREP[c.tipo].map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+      html += `<h3 class="sec">Modo de preparo —${c.tipo === 'infusao' ? 'infusão' : c.tipo === 'decoccao' ? 'decocção' : c.tipo === 'maceracao' ? 'maceração' : c.tipo === 'tintura' ? 'diluição da tintura' : 'droga vegetal'}</h3><ol class="steps">${PREP[c.tipo].map(x => `<li>${esc(x)}</li>`).join('')}</ol>
         <p class="small sec">Tempo máximo de uso: <b>${esc(p.tempoMax)}</b>. <a href="#/planta/${p.id}">Ver contraindicações</a></p>`;
       cout.innerHTML = html;
     };
@@ -918,12 +953,15 @@
     ['Emenagogo', 'Estimula o fluxo menstrual / a musculatura uterina — motivo de contraindicação na gestação.'],
     ['Hepatotoxicidade', 'Lesão do fígado causada por substância (ex.: kava-kava em doses altas).'],
     ['Antraquinonas / antranoides', 'Substâncias laxativas estimulantes (sene, cáscara-sagrada). Uso prolongado causa perda de potássio e dependência.'],
-    ['Asteraceae', 'Família botânica de camomila, calêndula, alcachofra e equinácea. Pessoas alérgicas a uma podem reagir às outras.']
+    ['Asteraceae', 'Família botânica de camomila, calêndula, alcachofra e equinácea. Pessoas alérgicas a uma podem reagir às outras.'],
+    ['Preparação extemporânea', 'Preparação feita na hora do uso (ex.: chá por infusão, decocção ou maceração), sem conservantes. No Formulário de Fitoterápicos, é a forma usada nos chás.'],
+    ['RDE (relação droga:extrato)', 'Quantas partes de droga vegetal geram 1 parte de extrato. Ex.: RDE 5:1 = 5 g de planta para 1 g de extrato seco.'],
+    ['Formulário de Fitoterápicos', 'Compêndio da Farmacopeia Brasileira (Anvisa) com fórmulas padronizadas de chás, tinturas, extratos, géis, pomadas e cápsulas para manipulação em farmácias e farmácias vivas. 3ª edição: 2026, 85 monografias.']
   ];
   routes.glossario = () => {
     setTitle('Glossário');
     main.innerHTML = `
-      <div class="page-head"><h1>Glossário técnico</h1><p>Termos de fitoterapia e farmacotécnica usados no Memento.</p></div>
+      <div class="page-head"><h1>Glossário técnico</h1><p>Termos de fitoterapia e farmacotécnica usados no Memento e no Formulário de Fitoterápicos.</p></div>
       <div class="card"><h2>Infusão × Decocção × Maceração × Tintura</h2>
         <div class="table-wrap"><table>
           <thead><tr><th></th><th>Infusão</th><th>Decocção</th><th>Maceração</th><th>Tintura</th></tr></thead>
@@ -1102,13 +1140,14 @@
         <div class="qr-share"><img src="assets/img/qrcode.png" width="180" height="180" alt="QR code para acessar o FitoTech - UFAM: ig0rscruz.github.io/fitotech-ufam"><div><h2>Acesse e compartilhe</h2><p class="small">Aponte a câmera do celular para o QR code para abrir o FitoTech - UFAM.</p><p class="small"><b>ig0rscruz.github.io/fitotech-ufam</b></p></div></div>
         <h2>Referências</h2>
         <ul><li>BRASIL. Agência Nacional de Vigilância Sanitária. <i>Memento Fitoterápico da Farmacopeia Brasileira</i>. 1. ed. Brasília: Anvisa, 2016 (RDC nº 84/2016).</li>
+          <li>BRASIL. Agência Nacional de Vigilância Sanitária. <i>Formulário de Fitoterápicos da Farmacopeia Brasileira</i>. 3. ed. Brasília: Anvisa, 2026 (RDC nº 1.024/2026).</li>
           <li>BRASIL. Anvisa. <i>Formulário de Fitoterápicos da Farmacopeia Brasileira</i> (medidas caseiras de referência).</li>
           <li>Sociedade Brasileira de Cardiologia. <i>Diretrizes Brasileiras de Hipertensão Arterial</i> – 2020 (classificação da PA).</li>
           <li>OMS — classificação do IMC; Lipschitz (1994) — IMC em idosos.</li></ul>
         <h2>Fotos</h2><p class="small">Wikimedia Commons (licenças livres; o link de cada foto aparece na ficha) e anotações da equipe.</p>
         <div class="institution-signature"><img src="assets/institutional/ufam.png" width="52" height="68" alt="Logo da Universidade Federal do Amazonas"><span><b>Universidade Federal do Amazonas</b><small>Projeto Acadêmico da Disciplina de Fitoterapia da Faculdade de Ciências Farmacêuticas</small></span></div>
         <h2>Equipe</h2><ul class="small"><li>Ana Beatriz Costa Prado</li><li>Emanuelly Victoria Litaiff Cauper Nonato</li><li>Igor Santana Cruz</li><li>Lorranna Tomas da Rocha</li><li>Lousianne Kelly Silva Santos</li><li>Luiz Henrique Silva</li><li>Pedro Henrique Anveres Pedreira</li></ul>
-        <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Nova identidade visual: personagens 3D, logo renovada, ícones e navegação lateral. A v.0 foi a primeira versão (protótipo). Novas versões são publicadas automaticamente no site e nos apps.</span></p>
+        <h2>Versão</h2><p><span class="badge info">${APP_VERSION}</span> <span class="small muted">Formulário de Fitoterápicos (3ª ed., 2026) incluído: 85 monografias, 59 espécies novas com fotos, fórmulas e alertas. Histórico: v.0 protótipo; v.1 nova identidade visual. Novas versões são publicadas automaticamente no site e nos apps.</span></p>
         <h2>Privacidade</h2><p class="small">Nenhum dado é enviado a servidores. Atendimentos e contatos ficam somente no armazenamento local do aparelho.</p>
         <div class="callout warn small">Ferramenta educacional e de apoio à decisão. Não substitui o julgamento clínico, a monografia oficial ou a bula do produto.</div>
         <div class="btn-row"><button class="btn ghost small" type="button" id="clearAll">Apagar dados salvos neste aparelho</button></div>

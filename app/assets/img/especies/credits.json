@@ -136,5 +136,242 @@
  "maytenus-ilicifolia": {
   "file": "maytenus-ilicifolia.jpg",
   "commons": "https://commons.wikimedia.org/wiki/File:Maytenus_ilicifolia.jpg"
+ },
+ "achillea-millefolium": {
+  "file": "achillea-millefolium.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Achillea_millefolium_(bright).jpg"
+ },
+ "achyrocline-satureioides": {
+  "file": "achyrocline-satureioides.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Macela.JPG"
+ },
+ "aloysia-polystachya": {
+  "file": "aloysia-polystachya.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Aloysia_polytachya.jpg"
+ },
+ "baccharis-trimera": {
+  "file": "baccharis-trimera.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:1920px-Carqueja,_Baccharis_trimera.jpg"
+ },
+ "crataegus-spp": {
+  "file": "crataegus-spp.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:(MHNT)_Crataegus_monogyna_-_flowers_and_buds.jpg"
+ },
+ "curcuma-longa": {
+  "file": "curcuma-longa.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Turmeric_inflorescence.jpg"
+ },
+ "cymbopogon-citratus": {
+  "file": "cymbopogon-citratus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Gardenology.org-IMG_2892_rbgs11jan.jpg"
+ },
+ "erythrina-mulungu": {
+  "file": "erythrina-mulungu.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Erythrina_mulungu.jpg"
+ },
+ "eugenia-uniflora": {
+  "file": "eugenia-uniflora.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:1920px-Pitanga_(do_tupi_'ybapytanga)_no_pampa_gaúcho_01.jpg"
+ },
+ "glycyrrhiza-glabra": {
+  "file": "glycyrrhiza-glabra.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Illustration_Glycyrrhiza_glabra0.jpg"
+ },
+ "hamamelis-virginiana": {
+  "file": "hamamelis-virginiana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Hamamelis_virginiana_FlowersLeaves_BotGardBln0906.JPG"
+ },
+ "alpinia-zerumbet": {
+  "file": "alpinia-zerumbet.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:200410_Alpinia_zerumbet_1.JPG"
+ },
+ "alternanthera-brasiliana": {
+  "file": "alternanthera-brasiliana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Brazilian_joyweed_(Alternanthera_brasiliana)_habit.jpg"
+ },
+ "anacardium-occidentale": {
+  "file": "anacardium-occidentale.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Cashew_apples.jpg"
+ },
+ "arctium-lappa": {
+  "file": "arctium-lappa.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:ArctiumLappa1.jpg"
+ },
+ "arnica-montana": {
+  "file": "arnica-montana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Arnica_montana_-_Köhler–s_Medizinal-Pflanzen-015.jpg"
+ },
+ "bidens-pilosa": {
+  "file": "bidens-pilosa.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Bidens_pilosa-Silent_Valley-2016-08-13-001.jpg"
+ },
+ "casearia-sylvestris": {
+  "file": "casearia-sylvestris.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Guaçatonga.JPG"
+ },
+ "cinnamomum-verum": {
+  "file": "cinnamomum-verum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Cinnamomum_verum1.jpg"
+ },
+ "citrus-aurantium": {
+  "file": "citrus-aurantium.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Citrus_aurantium.jpg"
+ },
+ "cordia-verbenacea": {
+  "file": "cordia-verbenacea.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Cordia_curassavica_1.jpg"
+ },
+ "echinacea-angustifolia": {
+  "file": "echinacea-angustifolia.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Pale_Purple-Coneflower_(Echinacea_angustifolia)_2016-07-12_963.jpg"
+ },
+ "eucalyptus-globulus": {
+  "file": "eucalyptus-globulus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Eucalyptus_globulus_subsp._maidenii.jpg"
+ },
+ "foeniculum-vulgare": {
+  "file": "foeniculum-vulgare.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Foeniculum_July_2011-1a.jpg"
+ },
+ "illicium-verum": {
+  "file": "illicium-verum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Illicium_verum_1zz.jpg"
+ },
+ "justicia-pectoralis": {
+  "file": "justicia-pectoralis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Justicia_pectoralis_by_Scott_Zona_-_001.jpg"
+ },
+ "lavandula-angustifolia": {
+  "file": "lavandula-angustifolia.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Lavandula_angustifolia_-_Köhler–s_Medizinal-Pflanzen-087.jpg"
+ },
+ "leonurus-cardiaca": {
+  "file": "leonurus-cardiaca.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Motherwort.jpg"
+ },
+ "libidibia-ferrea": {
+  "file": "libidibia-ferrea.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:PAU-FERROceret10.jpg"
+ },
+ "lippia-alba": {
+  "file": "lippia-alba.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:1920px-Lippia_alba,_planta_semelhante_ao_cambará_06.jpg"
+ },
+ "malva-sylvestris": {
+  "file": "malva-sylvestris.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Mallow_January_2008-1.jpg"
+ },
+ "melissa-officinalis": {
+  "file": "melissa-officinalis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Lemon_balm_plant.jpg"
+ },
+ "mentha-piperita": {
+  "file": "mentha-piperita.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Pfefferminze_natur_peppermint.jpg"
+ },
+ "mikania-glomerata": {
+  "file": "mikania-glomerata.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:3840px-Mikania_glomerata.JPG"
+ },
+ "myracrodruon-urundeuva": {
+  "file": "myracrodruon-urundeuva.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Myracrodruon_urundeuva.jpg"
+ },
+ "olea-europaea": {
+  "file": "olea-europaea.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Olivesfromjordan.jpg"
+ },
+ "panax-ginseng": {
+  "file": "panax-ginseng.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Ginsengpflanze.jpg"
+ },
+ "persea-americana": {
+  "file": "persea-americana.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Persea_americana_fruit_2.JPG"
+ },
+ "phyllanthus-niruri": {
+  "file": "phyllanthus-niruri.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Phyllanthus_niruri.jpg"
+ },
+ "pimpinella-anisum": {
+  "file": "pimpinella-anisum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Koehler1887-PimpinellaAnisum.jpg"
+ },
+ "plantago-lanceolata": {
+  "file": "plantago-lanceolata.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Ribwort_600.jpg"
+ },
+ "plantago-major": {
+  "file": "plantago-major.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Grote_weegbree_bloeiwijze_Plantago_major_subsp._major.jpg"
+ },
+ "plectranthus-barbatus": {
+  "file": "plectranthus-barbatus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:3840px-Plectranthus_barbatus_kz02.jpg"
+ },
+ "polygala-senega": {
+  "file": "polygala-senega.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Polygala_senega_2.jpg"
+ },
+ "punica-granatum": {
+  "file": "punica-granatum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Pomegranate_flowers_(Punica_granatum),_Ponte_de_Sor,_Portugal_(approx._GPS_location)_julesvernex2.jpg"
+ },
+ "rosmarinus-officinalis": {
+  "file": "rosmarinus-officinalis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Rosemary_in_bloom.JPG"
+ },
+ "salix-spp": {
+  "file": "salix-spp.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Salix_purpurea_003.jpg"
+ },
+ "salvia-officinalis": {
+  "file": "salvia-officinalis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Salvia_officinalis0.jpg"
+ },
+ "sambucus-australis": {
+  "file": "sambucus-australis.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:1920px-Sambacus_australis,_acapora_(do_tupi_*'akapora).jpg"
+ },
+ "sambucus-nigra": {
+  "file": "sambucus-nigra.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Sambucus_nigra_004.jpg"
+ },
+ "silybum-marianum": {
+  "file": "silybum-marianum.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Milk_thistle_flowerhead.jpg"
+ },
+ "symphytum-officinale": {
+  "file": "symphytum-officinale.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Symphytum_officinale_01.jpg"
+ },
+ "tanacetum-parthenium": {
+  "file": "tanacetum-parthenium.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Feverfew.jpg"
+ },
+ "taraxacum-officinale": {
+  "file": "taraxacum-officinale.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Taraxacum_officinale_-_Köhler–s_Medizinal-Pflanzen-135.jpg"
+ },
+ "vaccinium-macrocarpon": {
+  "file": "vaccinium-macrocarpon.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Cranberry_bog.jpg"
+ },
+ "vaccinium-myrtillus": {
+  "file": "vaccinium-myrtillus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:203_Vaccinum_myrtillus_L.jpg"
+ },
+ "vitex-agnus-castus": {
+  "file": "vitex-agnus-castus.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Vitex_agnus-castus_1.JPG"
+ },
+ "zea-mays": {
+  "file": "zea-mays.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:Zea_mays_-_Köhler–s_Medizinal-Pflanzen-283.jpg"
+ },
+ "mikania-laevigata": {
+  "file": "mikania-laevigata.jpg",
+  "commons": "https://commons.wikimedia.org/wiki/File:3840px-Mikania_glomerata.JPG",
+  "obs": "Foto ilustrativa do gênero Mikania (M. glomerata, também chamada guaco). Substitua por uma foto de M. laevigata."
  }
 }

@@ -2,13 +2,21 @@
 
 <p align="center"><img src="app/assets/icons/logo.png" width="180" alt="Logo FitoTech - UFAM"></p>
 
-Protótipo de aplicativo para profissionais de saúde com as **28 espécies do Memento Fitoterápico da Farmacopeia Brasileira (Anvisa, 2016)**. É um site instalável (PWA) publicado no GitHub Pages, com versões para **Android (APK)**, **Windows (.exe)** e **iPhone** (atalho na tela inicial). Todas as versões abrem o mesmo site online, então uma atualização no site chega a todos os apps.
+Protótipo de aplicativo para profissionais de saúde com **87 espécies**: as 28 do **Memento Fitoterápico da Farmacopeia Brasileira (Anvisa, 2016)** e as 79 do **Formulário de Fitoterápicos da Farmacopeia Brasileira, 3ª ed. (Anvisa, 2026)** — 85 monografias e 237 fórmulas (20 espécies estão nos dois). É um site instalável (PWA) publicado no GitHub Pages, com versões para **Android (APK)**, **Windows (.exe)** e **iPhone** (atalho na tela inicial). Todas as versões abrem o mesmo site online, então uma atualização no site chega a todos os apps.
 
 ## Acesso
 
 - **Site:** https://ig0rscruz.github.io/fitotech-ufam/
 - **Android (APK) e Windows (.exe):** https://github.com/ig0rscruz/fitotech-ufam/releases/latest
 - **iPhone:** abrir o site no Safari → Compartilhar → Adicionar à Tela de Início
+
+## Formulário de Fitoterápicos (v.2)
+
+- **59 espécies novas** com ficha no mesmo padrão das 28 do Memento: foto (Wikimedia Commons), nomes, família, parte usada, indicações, advertências, modo de usar, alertas para a triagem, idade mínima e tempo de uso.
+- **Fórmulas** (chás, tinturas, extratos, géis, pomadas, cápsulas) em tabela componente × quantidade, com orientações de preparo — inclusive nas 20 espécies que também estão no Memento.
+- **Calculadora:** 73 preparações extemporâneas do Formulário (infusão, decocção e maceração), com alerta de dose.
+- Filtros **Memento** e **Formulário** na lista de espécies; selos de origem em cada ficha.
+- Os alertas das espécies novas foram extraídos das advertências por regras (ver `tools/formulario/`) — **conferir com a monografia**.
 
 ## Perfis de uso: paciente × profissional
 

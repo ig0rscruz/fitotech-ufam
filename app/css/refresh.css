@@ -102,3 +102,12 @@ main:focus { outline:none; }
 .qr-share { display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:var(--surface-2); border-radius:16px; padding:16px; }
 .qr-share img { width:180px; height:180px; background:#fff; padding:8px; border-radius:12px; flex:none; }
 .qr-share h2 { margin:0 0 6px; }
+
+/* Formulário de Fitoterápicos: tabelas de fórmulas */
+.ff-sec h2 { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.ff-formula { margin: 14px 0; }
+.ff-formula h3 { font-size: 1rem; margin: 0 0 6px; }
+.ff-formula table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.ff-formula th, .ff-formula td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.ff-formula td:last-child { white-space: nowrap; }
+.ff-sec details.sec > .in h3 { font-size: 1rem; margin: 12px 0 4px; }
