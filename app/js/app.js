@@ -1167,7 +1167,14 @@
   const net = () => { off.hidden = navigator.onLine; };
   window.addEventListener('online', net); window.addEventListener('offline', net); net();
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    // busca versão nova ao abrir; quando ela assume, recarrega uma vez (evita misturar arquivos de versões diferentes)
+    const tinhaControle = !!navigator.serviceWorker.controller;
+    let recarregou = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!tinhaControle || recarregou) return;
+      recarregou = true; location.reload();
+    });
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(reg => reg.update()).catch(() => {}));
   }
   themeBtn.innerHTML = icon('moon');
   go();
