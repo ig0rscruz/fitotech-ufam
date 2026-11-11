@@ -551,7 +551,18 @@
     setTitle('Atendimento');
     let st = store.get('atend', emptyAtend());
     if (r.q.get('p') && byId[r.q.get('p')]) st.foco = r.q.get('p');
-    const prof = store.get('prof', { nome: '', registro: '', local: '' });
+    const prof = Object.assign({ nome: '', conselho: '', conselhoOutro: '', uf: '', registro: '', local: '' }, store.get('prof', {}));
+    const CONSELHOS = [['CRM', 'CRM — Médico(a)'], ['COREN', 'COREN — Enfermeiro(a)'], ['CRF', 'CRF — Farmacêutico(a)'], ['CRN', 'CRN — Nutricionista'],
+      ['CRO', 'CRO — Cirurgião(ã)-dentista'], ['CREFITO', 'CREFITO — Fisioterapeuta'], ['CRBM', 'CRBM — Biomédico(a)'], ['OUTRO', 'Outro conselho…']];
+    const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
+    const sigla = () => prof.conselho === 'OUTRO' ? String(prof.conselhoOutro || '').trim().toUpperCase() : prof.conselho;
+    // "CRF-AM 12345" (ou só o número, se o conselho não foi escolhido)
+    const regTxt = () => {
+      const s = sigla(), n = String(prof.registro || '').trim();
+      return [s ? (prof.uf ? `${s}-${prof.uf}` : s) : '', n].filter(Boolean).join(' ');
+    };
+    const profFalta = () => [!String(prof.nome).trim() && 'nome', !sigla() && 'conselho', !prof.uf && 'UF', !String(prof.registro).trim() && 'nº de inscrição'].filter(Boolean);
+    const profAviso = () => { const f = profFalta(); return f.length ? `<div class="callout warn small" id="profWarn">⚠ Faltam dados do profissional no receituário: <b>${f.join(', ')}</b>. Sem eles a receita sai com linhas em branco para preencher à mão.</div>` : '<div id="profWarn"></div>'; };
     const V = (k) => esc(st.pac[k] ?? '');
     main.innerHTML = `
       <div class="page-head"><h1>Atendimento clínico</h1><p>Registre os dados do paciente, a queixa e veja quais espécies são compatíveis, exigem atenção ou estão contraindicadas.</p></div>
@@ -651,7 +662,7 @@
               ${status !== 'bad' ? `<div class="btn-row" style="margin-top:6px"><button class="btn small" type="button" data-rx="${p.id}">+ Prescrever</button>${p.calc.length ? `<a class="btn ghost small" href="#/calculadora?p=${p.id}">Calcular</a>` : ''}</div>` : ''}
             </div>
           </div>`).join('')}</div>
-        ${q && lista.length ? `<p class="sec"><button class="btn ghost small" type="button" id="toggleAll">${showAll ? 'Mostrar só as indicadas para a queixa' : 'Ver triagem de todas as 28 espécies'}</button></p>` : ''}`;
+        ${q && lista.length ? `<p class="sec"><button class="btn ghost small" type="button" id="toggleAll">${showAll ? 'Mostrar só as indicadas para a queixa' : `Ver triagem de todas as ${N_ESP} espécies`}</button></p>` : ''}`;
     };
     const rxOptions = p => [
       ...p.calc.map(c => c.nome), ...(p.populacao.length ? ['Preparo caseiro (ver orientação)'] : []), ...p.magistral, 'Outro (descrever)'
@@ -663,10 +674,14 @@
       box.innerHTML = `
         <h2>Receituário</h2>
         <div class="fields">
-          <div class="field" style="grid-column:span 2"><label for="pnome">Profissional</label><input id="pnome" data-prof="nome" type="text" value="${esc(prof.nome)}"></div>
-          <div class="field"><label for="preg">Registro (CRM/COREN/CRF/CRN)</label><input id="preg" data-prof="registro" type="text" value="${esc(prof.registro)}"></div>
-          <div class="field"><label for="ploc">Unidade / local</label><input id="ploc" data-prof="local" type="text" value="${esc(prof.local)}"></div>
+          <div class="field" style="grid-column:1/-1"><label for="pnome">Profissional (nome completo)</label><input id="pnome" data-prof="nome" type="text" autocomplete="name" value="${esc(prof.nome)}"></div>
+          <div class="field" style="grid-column:span 2"><label for="pcons">Conselho profissional</label><select id="pcons" data-prof="conselho"><option value="">Selecione…</option>${CONSELHOS.map(([v, l]) => `<option value="${v}" ${v === prof.conselho ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+          ${prof.conselho === 'OUTRO' ? `<div class="field"><label for="pcoutro">Sigla do conselho</label><input id="pcoutro" data-prof="conselhoOutro" type="text" maxlength="12" placeholder="Ex.: CRBio" value="${esc(prof.conselhoOutro)}"></div>` : ''}
+          <div class="field"><label for="puf">UF do conselho</label><select id="puf" data-prof="uf"><option value="">UF</option>${UFS.map(u => `<option ${u === prof.uf ? 'selected' : ''}>${u}</option>`).join('')}</select></div>
+          <div class="field"><label for="preg">Nº de inscrição</label><input id="preg" data-prof="registro" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" value="${esc(prof.registro)}"></div>
+          <div class="field" style="grid-column:1/-1"><label for="ploc">Unidade / local de atendimento</label><input id="ploc" data-prof="local" type="text" value="${esc(prof.local)}"></div>
         </div>
+        ${profAviso()}
         ${st.rx.map((it, i) => { const p = byId[it.id]; const a = avaliar(p, st, v); return `
           <div class="card sec" data-i="${i}">
             <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>${i + 1}. ${esc(p.nome)} <span class="sci small">${esc(p.cientifico)}</span></h3><button class="btn ghost small" type="button" data-del="${i}" aria-label="Remover">✕</button></div>
@@ -686,20 +701,34 @@
       let t = `RECEITUÁRIO — FITOTERAPIA\nPaciente: ${st.pac.nome || '—'}  Idade: ${st.pac.idade || '—'}  Data: ${d}\n`;
       if (v.imc || st.pac.pas) t += `PA: ${st.pac.pas || '—'}/${st.pac.pad || '—'} mmHg · FC: ${st.pac.fc || '—'} bpm · Peso: ${st.pac.peso || '—'} kg · IMC: ${v.imc ? fmt(v.imc) : '—'}\n`;
       st.rx.forEach((it, i) => { const p = byId[it.id]; t += `\n${i + 1}. ${p.nome} (${p.cientifico}) — ${p.parte}\n   ${it.forma}\n   ${it.via}. ${it.posologia}\n   Duração: ${it.duracao}\n`; });
-      t += `\nSuspender o uso e procurar atendimento se houver reação adversa. Intoxicação: Disque-Intoxicação 0800 722 6001 · SAMU 192.\n${prof.nome || ''} ${prof.registro ? '— ' + prof.registro : ''}`;
+      t += `\nSuspender o uso e procurar atendimento se houver reação adversa. Intoxicação: Disque-Intoxicação 0800 722 6001 · SAMU 192.\n${[prof.nome, regTxt()].filter(Boolean).join(' — ')}${prof.local ? '\n' + prof.local : ''}`;
       return t;
     };
-    const printRx = () => {
+    const printRx = async () => {
       const v = vitals(st.pac); const d = new Date().toLocaleDateString('pt-BR');
-      document.getElementById('print').innerHTML = `
-        <div class="rx-head"><h1>Receituário — Fitoterapia</h1><div>${esc(prof.local || '')}</div></div>
+      const reg = regTxt();
+      // a folha tem espaço fixo no topo e no rodapé de cada página (tabela com thead/tfoot): a margem do @page é zero,
+      // assim o navegador não escreve ali o título nem o endereço da página
+      document.getElementById('print').innerHTML = `<table class="rx-page"><thead><tr><td><div class="rx-gap"></div></td></tr></thead><tbody><tr><td>
+        <div class="rx-head">
+          <img class="rx-logo" src="assets/icons/icon-512.png" alt="FitoTech - UFAM" width="96" height="96">
+          <div class="rx-head-txt"><h1>Receituário — Fitoterapia</h1>
+            <div class="rx-prof"><b>${esc(prof.nome || '______________________________')}</b> · ${esc(reg || '__________________')}</div>
+            ${prof.local ? `<div>${esc(prof.local)}</div>` : ''}</div>
+        </div>
         <p><b>Paciente:</b> ${esc(st.pac.nome || '________________')} &nbsp; <b>Idade:</b> ${esc(st.pac.idade || '—')} &nbsp; <b>Data:</b> ${d}</p>
         <p style="font-size:10pt">PA ${esc(st.pac.pas || '—')}/${esc(st.pac.pad || '—')} mmHg · FC ${esc(st.pac.fc || '—')} bpm · Peso ${esc(st.pac.peso || '—')} kg · Altura ${esc(st.pac.altura || '—')} cm · IMC ${v.imc ? fmt(v.imc) : '—'}</p>
         <p><b>Uso ${esc([...new Set(st.rx.map(x => x.via.split(' ')[0].toLowerCase()))].join(' / '))}</b></p>
         ${st.rx.map((it, i) => { const p = byId[it.id]; return `<div class="rx-item"><b>${i + 1}. ${esc(p.nome)}</b> (<i>${esc(p.cientifico)}</i>) — ${esc(p.parte)}<br>${esc(it.forma)}<br>${esc(it.posologia)}<br>Duração: ${esc(it.duracao)}</div>`; }).join('')}
         <div class="rx-alert"><b>Orientações:</b> não exceder a dose; suspender e procurar o serviço de saúde em caso de reação adversa; informar o uso de fitoterápicos em consultas e antes de cirurgias. Intoxicação: Disque-Intoxicação 0800 722 6001 · SAMU 192.</div>
-        <div class="rx-sign"><div>${esc(prof.nome || 'Assinatura e carimbo')}<br>${esc(prof.registro || '')}</div></div>
-        <div class="rx-foot">Gerado pelo FitoTech - UFAM com base no Memento Fitoterápico (Anvisa, 2016) e no Formulário de Fitoterápicos (Anvisa, 2026) da Farmacopeia Brasileira.</div>`;
+        <div class="rx-sign"><div>${esc(prof.nome || 'Assinatura e carimbo')}<br>${esc(reg)}</div></div>
+        <div class="rx-foot">Gerado pelo FitoTech - UFAM com base no Memento Fitoterápico (Anvisa, 2016) e no Formulário de Fitoterápicos (Anvisa, 2026) da Farmacopeia Brasileira.</div>
+        </td></tr></tbody><tfoot><tr><td><div class="rx-gap"></div></td></tr></tfoot></table>`;
+      // espera a logo carregar, senão a impressão sai sem ela
+      const imgs = [...document.querySelectorAll('#print img')];
+      await Promise.race([Promise.all(imgs.map(i => (i.decode ? i.decode() : Promise.resolve()).catch(() => {}))), new Promise(r => setTimeout(r, 2500))]);
+      const titulo = document.title; document.title = 'Receituário fitoterápico';
+      window.addEventListener('afterprint', () => { document.title = titulo; }, { once: true });
       window.print();
     };
 
@@ -726,7 +755,12 @@
     });
     main.querySelector('#receita').addEventListener('input', e => {
       const el = e.target;
-      if (el.dataset.prof) { prof[el.dataset.prof] = el.value; store.set('prof', prof); return; }
+      if (el.dataset.prof) {
+        prof[el.dataset.prof] = el.value; store.set('prof', prof);
+        if (el.id === 'pcons') { renderRx(); return; }       // "Outro conselho" mostra o campo da sigla
+        const w = main.querySelector('#profWarn'); if (w) w.outerHTML = profAviso();
+        return;
+      }
       const card = el.closest('[data-i]'); if (!card || !el.dataset.k) return;
       st.rx[+card.dataset.i][el.dataset.k] = el.value; save();
     });
